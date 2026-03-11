@@ -1,0 +1,4 @@
+.conan2
+recipes/*/test_package/build/
+recipes/*/test_package/conan_pyenv/
+CMakeUserPresets.json

@@ -1,0 +1,17 @@
+{
+    "build-order": {
+        "ament_package":{
+            "requires": []
+        },
+        "ament_cmake_core": {
+            "requires": []
+        },
+        "ament_cmake_libraries": {
+            "requires": ["ament_cmake_core"]
+        },
+        "ament_cmake_export_dependencies":
+        {
+            "requires": ["ament_cmake_core", "ament_cmake_libraries"]
+        }
+    }
+}
