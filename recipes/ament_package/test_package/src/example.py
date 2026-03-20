@@ -1,1 +1,0 @@
-from ament_package.templates import get_environment_hook_template_path
