@@ -76,10 +76,16 @@ def conan_requires_from_package_xml_depends(
     package_xml_depends: dict[str, list[str]],
     snapshot: dict,
 ) -> tuple[list[str], list[str]]:
-    run_keys = ("depend", "exec_depend")
+    # REP-140: most ROS packages use build_depend / build_export_depend, not <depend>.
+    host_keys = (
+        "build_depend",
+        "build_export_depend",
+        "depend",
+        "exec_depend",
+    )
     tool_keys = ("buildtool_depend", "buildtool_export_depend")
     run_names: list[str] = []
-    for k in run_keys:
+    for k in host_keys:
         run_names.extend(package_xml_depends.get(k, []))
     tool_names: list[str] = []
     for k in tool_keys:
