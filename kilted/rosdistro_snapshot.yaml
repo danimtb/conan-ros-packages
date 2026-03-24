@@ -1,7 +1,131 @@
 # rosdistro_snapshot.yaml — Conan-focused snapshot + package.xml deps/export
-# Generated at 2026-03-24T11:20:35Z UTC
+# Generated at 2026-03-24T12:23:18Z UTC
 # Source: C:\Users\danielm\repos\conan-ros-kilted\kilted\distribution.yaml
-# Packages: 11
+# Packages: 58
+ament_clang_format:
+  package_xml_depends:
+    exec_depend:
+    - clang-format
+    - python3-yaml
+    test_depend:
+    - ament_copyright
+    - ament_flake8
+    - ament_pep257
+    - ament_xmllint
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_clang_format/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_clang_tidy:
+  package_xml_depends:
+    exec_depend:
+    - clang-tidy
+    - python3-yaml
+    test_depend:
+    - ament_copyright
+    - ament_flake8
+    - ament_pep257
+    - ament_xmllint
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_clang_tidy/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake:
+  package_xml_depends:
+    build_depend:
+    - ament_cmake_core
+    - ament_cmake_export_dependencies
+    build_export_depend:
+    - ament_cmake_core
+    - ament_cmake_export_definitions
+    - ament_cmake_export_dependencies
+    - ament_cmake_export_include_directories
+    - ament_cmake_export_interfaces
+    - ament_cmake_export_libraries
+    - ament_cmake_export_link_flags
+    - ament_cmake_export_targets
+    - ament_cmake_gen_version_h
+    - ament_cmake_libraries
+    - ament_cmake_python
+    - ament_cmake_target_dependencies
+    - ament_cmake_test
+    - ament_cmake_version
+    buildtool_depend:
+    - cmake
+    buildtool_export_depend:
+    - cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_auto:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake
+    - ament_cmake_gmock
+    - ament_cmake_gtest
+    buildtool_export_depend:
+    - ament_cmake
+    - ament_cmake_gmock
+    - ament_cmake_gtest
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_auto/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_clang_format:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_clang_format
+    - ament_cmake_test
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_clang_format/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_clang_tidy:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_clang_tidy
+    - ament_cmake_test
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_clang_tidy/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_copyright:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    - ament_copyright
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_copyright
+    test_depend:
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_copyright/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
 ament_cmake_core:
   package_xml_depends:
     buildtool_depend:
@@ -17,6 +141,50 @@ ament_cmake_core:
   tag: release/kilted/ament_cmake_core/2.7.5-1
   url: https://github.com/ros2-gbp/ament_cmake-release.git
   version: 2.7.5
+ament_cmake_cppcheck:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    - ament_cppcheck
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_cppcheck/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_cpplint:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_cpplint
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_cpplint/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_export_definitions:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_core
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_export_definitions/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
 ament_cmake_export_dependencies:
   package_xml_depends:
     buildtool_depend:
@@ -27,6 +195,145 @@ ament_cmake_export_dependencies:
   package_xml_export:
     build_type: ament_cmake
   tag: release/kilted/ament_cmake_export_dependencies/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_export_include_directories:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_core
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_export_include_directories/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_export_interfaces:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_core
+    - ament_cmake_export_libraries
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_export_interfaces/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_export_libraries:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_core
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_export_libraries/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_export_link_flags:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_core
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_export_link_flags/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_export_targets:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_core
+    - ament_cmake_export_libraries
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_export_targets/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_flake8:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_flake8
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_flake8/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_gen_version_h:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_package
+    buildtool_export_depend:
+    - ament_cmake_core
+    test_depend:
+    - ament_cmake_gtest
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_gen_version_h/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_gmock:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_gtest
+    - ament_cmake_test
+    - gmock_vendor
+    - google-mock
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_gmock/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_google_benchmark:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_export_dependencies
+    - ament_cmake_python
+    exec_depend:
+    - ament_cmake_test
+    - google_benchmark_vendor
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_google_benchmark/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_gtest:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_test
+    - gtest
+    - gtest_vendor
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_gtest/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_include_directories:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_core
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_include_directories/2.7.5-1
   url: https://github.com/ros2-gbp/ament_cmake-release.git
   version: 2.7.5
 ament_cmake_libraries:
@@ -40,6 +347,211 @@ ament_cmake_libraries:
   tag: release/kilted/ament_cmake_libraries/2.7.5-1
   url: https://github.com/ros2-gbp/ament_cmake-release.git
   version: 2.7.5
+ament_cmake_lint_cmake:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    - ament_lint_cmake
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_lint_cmake/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_mypy:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_mypy
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_mypy/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_pclint:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_pclint
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_pclint/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_pep257:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_pep257
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_pep257/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_pycodestyle:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_pycodestyle
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_pycodestyle/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_pyflakes:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_pyflakes
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_pyflakes/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_pytest:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    - python3-pytest
+    buildtool_export_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_pytest/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_python:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_core
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_python/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_target_dependencies:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_core
+    - ament_cmake_include_directories
+    - ament_cmake_libraries
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_target_dependencies/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_test:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_python
+    buildtool_export_depend:
+    - ament_cmake_core
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_test/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_uncrustify:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_uncrustify
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_uncrustify/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cmake_vendor_package:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_export_dependencies
+    buildtool_export_depend:
+    - ament_cmake_core
+    - ament_cmake_export_dependencies
+    - git
+    - python3-vcstool
+    test_depend:
+    - ament_cmake_test
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_vendor_package/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_version:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    buildtool_export_depend:
+    - ament_cmake_core
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_version/2.7.5-1
+  url: https://github.com/ros2-gbp/ament_cmake-release.git
+  version: 2.7.5
+ament_cmake_xmllint:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_test
+    - ament_xmllint
+    test_depend:
+    - ament_cmake_copyright
+    - ament_cmake_lint_cmake
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_cmake_xmllint/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
 ament_copyright:
   package_xml_depends:
     exec_depend:
@@ -52,6 +564,22 @@ ament_copyright:
   package_xml_export:
     build_type: ament_python
   tag: release/kilted/ament_copyright/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cppcheck:
+  package_xml_depends:
+    exec_depend:
+    - cppcheck
+    test_depend:
+    - ament_copyright
+    - ament_flake8
+    - ament_pep257
+    - ament_pycodestyle
+    - ament_xmllint
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_cppcheck/0.19.2-2
   url: https://github.com/ros2-gbp/ament_lint-release.git
   version: 0.19.2
 ament_cpplint:
@@ -94,6 +622,19 @@ ament_lint:
   tag: release/kilted/ament_lint/0.19.2-2
   url: https://github.com/ros2-gbp/ament_lint-release.git
   version: 0.19.2
+ament_lint_auto:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+    buildtool_export_depend:
+    - ament_cmake_core
+    - ament_cmake_test
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_lint_auto/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
 ament_lint_cmake:
   package_xml_depends:
     test_depend:
@@ -105,6 +646,41 @@ ament_lint_cmake:
   package_xml_export:
     build_type: ament_python
   tag: release/kilted/ament_lint_cmake/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_lint_common:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake_core
+    - ament_cmake_export_dependencies
+    buildtool_export_depend:
+    - ament_cmake_core
+    exec_depend:
+    - ament_cmake_copyright
+    - ament_cmake_cppcheck
+    - ament_cmake_cpplint
+    - ament_cmake_flake8
+    - ament_cmake_lint_cmake
+    - ament_cmake_pep257
+    - ament_cmake_uncrustify
+    - ament_cmake_xmllint
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/ament_lint_common/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_mypy:
+  package_xml_depends:
+    exec_depend:
+    - python3-mypy
+    test_depend:
+    - ament_flake8
+    - ament_xmllint
+    - python3-pytest
+    - python3-pytest-mock
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_mypy/0.19.2-2
   url: https://github.com/ros2-gbp/ament_lint-release.git
   version: 0.19.2
 ament_package:
@@ -122,6 +698,19 @@ ament_package:
   tag: release/kilted/ament_package/0.17.2-2
   url: https://github.com/ros2-gbp/ament_package-release.git
   version: 0.17.2
+ament_pclint:
+  package_xml_depends:
+    test_depend:
+    - ament_copyright
+    - ament_flake8
+    - ament_pep257
+    - ament_xmllint
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_pclint/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
 ament_pep257:
   package_xml_depends:
     exec_depend:
@@ -133,6 +722,47 @@ ament_pep257:
   package_xml_export:
     build_type: ament_python
   tag: release/kilted/ament_pep257/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_pycodestyle:
+  package_xml_depends:
+    exec_depend:
+    - python3-pycodestyle
+    test_depend:
+    - ament_xmllint
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_pycodestyle/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_pyflakes:
+  package_xml_depends:
+    exec_depend:
+    - pyflakes3
+    test_depend:
+    - ament_pycodestyle
+    - ament_xmllint
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_pyflakes/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_uncrustify:
+  package_xml_depends:
+    exec_depend:
+    - uncrustify_vendor
+    test_depend:
+    - ament_copyright
+    - ament_flake8
+    - ament_pep257
+    - ament_pycodestyle
+    - ament_xmllint
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_uncrustify/0.19.2-2
   url: https://github.com/ros2-gbp/ament_lint-release.git
   version: 0.19.2
 ament_xmllint:
@@ -150,3 +780,47 @@ ament_xmllint:
   tag: release/kilted/ament_xmllint/0.19.2-2
   url: https://github.com/ros2-gbp/ament_lint-release.git
   version: 0.19.2
+gmock_vendor:
+  package_xml_depends:
+    build_export_depend:
+    - gtest_vendor
+    buildtool_depend:
+    - cmake
+  package_xml_export:
+    build_type: cmake
+  tag: release/kilted/gmock_vendor/1.15.1-2
+  url: https://github.com/ros2-gbp/googletest-release.git
+  version: 1.15.1
+google_benchmark_vendor:
+  package_xml_depends:
+    buildtool_depend:
+    - cmake
+    - git
+    depend:
+    - benchmark
+  package_xml_export:
+    build_type: cmake
+  tag: release/kilted/google_benchmark_vendor/0.6.1-2
+  url: https://github.com/ros2-gbp/google_benchmark_vendor-release.git
+  version: 0.6.1
+gtest_vendor:
+  package_xml_depends:
+    buildtool_depend:
+    - cmake
+  package_xml_export:
+    build_type: cmake
+  tag: release/kilted/gtest_vendor/1.15.1-2
+  url: https://github.com/ros2-gbp/googletest-release.git
+  version: 1.15.1
+uncrustify_vendor:
+  package_xml_depends:
+    buildtool_depend:
+    - ament_cmake
+    - ament_cmake_vendor_package
+    depend:
+    - uncrustify
+  package_xml_export:
+    build_type: ament_cmake
+  tag: release/kilted/uncrustify_vendor/3.1.0-2
+  url: https://github.com/ros2-gbp/uncrustify_vendor-release.git
+  version: 3.1.0

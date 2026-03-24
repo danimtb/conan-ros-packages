@@ -8,10 +8,10 @@ From the **repository root**:
 
 ```bash
 # Snapshot (fetches package.xml from GitHub for dependency closure)
-# Default: only supported-packages.json + transitive ROS deps present in the distribution
+# Default: only supported-packages.yaml + transitive ROS deps present in the distribution
 python scripts/generate_snapshot.py --work-dir kilted
 
-# Every released package in the distribution (no supported-packages.json)
+# Every released package in the distribution (no supported-packages.yaml)
 python scripts/generate_snapshot.py --all-packages
 
 # Generate conandata + packages-build-order.json
@@ -33,7 +33,8 @@ At the repository root, the workspace folder (e.g. `kilted/`) holds inputs and g
 **Inputs**
 
 - `distribution.yaml` — rosdistro distribution file in the workspace
-- `supported-packages.json` — seed package names; `generate_snapshot.py` includes these plus transitive ROS dependencies (unless `--all-packages`). Same file drives `generate_recipes.py`.
+- `supported-packages.yaml` — seed package names (list under `supported-packages`; YAML comments allowed). `generate_snapshot.py` includes these plus transitive ROS dependencies (unless `--all-packages`). Same file drives `generate_recipes.py`.
+- `supported-packages-tests.yaml` *(optional)* — `test-packages` mapping from package name to a `test_package` spec; `generate_recipes.py` generates `test_package/` only when that name is also listed in `supported-packages.yaml`.
 
 **Generated**
 
