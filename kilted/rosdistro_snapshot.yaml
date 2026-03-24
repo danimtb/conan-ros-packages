@@ -1,6 +1,6 @@
-# rosdistro_snapshot.yaml — Conan-focused snapshot + package.xml deps
-# Generated at 2026-03-20T13:06:11Z UTC
-# Source: kilted/distribution.yaml
+# rosdistro_snapshot.yaml — Conan-focused snapshot + package.xml deps/export
+# Generated at 2026-03-23T15:46:48Z UTC
+# Source: C:\Users\danielm\repos\conan-ros-kilted\kilted\distribution.yaml
 # Packages: 4
 ament_cmake_core:
   package_xml_depends:
@@ -12,6 +12,8 @@ ament_cmake_core:
     - ament_package
     - cmake
     - python3-catkin-pkg-modules
+  package_xml_export:
+    build_type: ament_cmake
   tag: release/kilted/ament_cmake_core/2.7.5-1
   url: https://github.com/ros2-gbp/ament_cmake-release.git
   version: 2.7.5
@@ -22,6 +24,8 @@ ament_cmake_export_dependencies:
     buildtool_export_depend:
     - ament_cmake_core
     - ament_cmake_libraries
+  package_xml_export:
+    build_type: ament_cmake
   tag: release/kilted/ament_cmake_export_dependencies/2.7.5-1
   url: https://github.com/ros2-gbp/ament_cmake-release.git
   version: 2.7.5
@@ -31,6 +35,8 @@ ament_cmake_libraries:
     - ament_cmake_core
     buildtool_export_depend:
     - ament_cmake_core
+  package_xml_export:
+    build_type: ament_cmake
   tag: release/kilted/ament_cmake_libraries/2.7.5-1
   url: https://github.com/ros2-gbp/ament_cmake-release.git
   version: 2.7.5
@@ -44,6 +50,8 @@ ament_package:
     test_depend:
     - python3-flake8
     - python3-pytest
+  package_xml_export:
+    build_type: ament_python
   tag: release/kilted/ament_package/0.17.2-2
   url: https://github.com/ros2-gbp/ament_package-release.git
   version: 0.17.2

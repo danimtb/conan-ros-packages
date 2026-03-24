@@ -6,8 +6,8 @@ from conan.tools.files import get
 from conan.tools.system import PyEnv
 
 
-class AmentCmakeLibrariesRecipe(ConanFile):
-    name = "ament_cmake_libraries"
+class AmentCmakeExportDependenciesRecipe(ConanFile):
+    name = "ament_cmake_export_dependencies"
     settings = "os", "arch", "compiler", "build_type"
 
     def set_version(self):
@@ -51,6 +51,6 @@ class AmentCmakeLibrariesRecipe(ConanFile):
 
     def package_info(self):
         # Extend builddirs if the package installs extra cmake subfolders under share/<name>/cmake/.
-        base_dir = os.path.join("share", "ament_cmake_libraries", "cmake")
+        base_dir = os.path.join("share", "ament_cmake_export_dependencies", "cmake")
         self.cpp_info.builddirs = [base_dir]
         self.cpp_info.set_property("cmake_find_mode", "none")

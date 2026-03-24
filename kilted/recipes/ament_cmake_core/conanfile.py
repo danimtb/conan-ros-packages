@@ -1,15 +1,14 @@
 import os
 
 from conan import ConanFile
+from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout
 from conan.tools.files import get
-from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
+from conan.tools.system import PyEnv
 
 
-class ament_cmake_coreRecipe(ConanFile):
+class AmentCmakeCoreRecipe(ConanFile):
     name = "ament_cmake_core"
-    package_type = "build-scripts"
     settings = "os", "arch", "compiler", "build_type"
-    generators = "CMakeToolchain", "VirtualRunEnv"
 
     def set_version(self):
         self.version = list(self.conan_data["sources"].keys())[0]
@@ -21,10 +20,22 @@ class ament_cmake_coreRecipe(ConanFile):
         cmake_layout(self)
 
     def requirements(self):
-        for require in self.conan_data["requires"]["version"]:
-            self.requires(require, visible=True)
-        for tool_require in self.conan_data["tool_requires"]["version"]:
-            self.tool_requires(tool_require, visible=True)
+        if self.conan_data.get("requires"):
+            for require in self.conan_data["requires"][self.version]:
+                self.requires(require)
+        if self.conan_data.get("tool_requires"):
+            for tool_require in self.conan_data["tool_requires"][self.version]:
+                self.tool_requires(tool_require)
+
+    def generate(self):
+        pyenv = PyEnv(self)
+        pyenv.install(["catkin-pkg"])
+        pyenv.generate()
+        tc = CMakeToolchain(self)
+        tc.cache_variables["Python_ROOT_DIR"] = pyenv.env_dir
+        tc.cache_variables["Python_EXECUTABLE"] = pyenv.env_exe
+        tc.cache_variables["Python3_EXECUTABLE"] = pyenv.env_exe
+        tc.generate()
 
     def build(self):
         cmake = CMake(self)
@@ -39,8 +50,7 @@ class ament_cmake_coreRecipe(ConanFile):
         self.info.clear()
 
     def package_info(self):
+        # Extend builddirs if the package installs extra cmake subfolders under share/<name>/cmake/.
         base_dir = os.path.join("share", "ament_cmake_core", "cmake")
         self.cpp_info.builddirs = [base_dir]
-        for folder in ["core", "environment", "environment_hooks", "index",
-                       "package_templates", "symlink_install", "uninstall_target"]:
-            self.cpp_info.builddirs.append(os.path.join(base_dir, folder))
+        self.cpp_info.set_property("cmake_find_mode", "none")

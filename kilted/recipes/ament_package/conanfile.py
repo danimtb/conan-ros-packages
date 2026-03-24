@@ -1,10 +1,8 @@
-import os
-
 from conan import ConanFile
 from conan.tools.files import copy, get
 
 
-class ament_cmakeRecipe(ConanFile):
+class AmentPackageRecipe(ConanFile):
     name = "ament_package"
 
     def set_version(self):
