@@ -1,5 +1,8 @@
+import os
+
 from conan import ConanFile
-from conan.tools.files import copy, get
+from conan.tools.files import copy, get, load, rmdir
+from conan.tools.system import PyEnv
 
 
 class {{recipe_class}}(ConanFile):
@@ -17,6 +20,16 @@ class {{recipe_class}}(ConanFile):
     def package_info(self):
         self.buildenv_info.prepend_path("PYTHONPATH", self.package_folder)
         self.runenv_info.prepend_path("PYTHONPATH", self.package_folder)
+        self.buildenv_info.prepend_path("PATH", self.package_folder)
+        self.runenv_info.prepend_path("PATH", self.package_folder)
 
     def finalize(self):
         copy(self, "*", src=self.immutable_package_folder, dst=self.package_folder)
+        setup_py_path = os.path.join(self.package_folder, "setup.py")
+        if os.path.exists(setup_py_path):
+            setup_py = load(self, setup_py_path)
+            if "console_scripts" in setup_py:
+                pyenv = PyEnv(self)
+                self.run(f"{pyenv.env_exe} -m pip install .", cwd=self.package_folder)
+                copy(self, "{{package_name}}*", src=os.path.join(pyenv.env_dir, "Scripts"), dst=self.package_folder)
+                #rmdir(self, pyenv.env_dir)  # Removing the pyevn directory causes the console scripts to not run
