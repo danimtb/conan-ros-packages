@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -10,6 +9,8 @@ from collections import defaultdict, deque
 from collections.abc import Iterable
 from pathlib import Path
 from urllib.parse import quote
+
+import yaml
 
 _PACKAGE_XML_DEPEND_TAGS = frozenset(
     {
@@ -135,39 +136,66 @@ def ros_snapshot_dep_names_from_package_xml(
 
 
 def load_supported_packages(path: Path) -> tuple[list[str], dict[str, dict]]:
-    """Parse supported-packages.json: seed names and optional per-package options (e.g. test_package)."""
+    """Parse supported-packages.yaml: seed names; merge test specs from supported-packages-tests.yaml when present.
+
+    Main file: top-level ``supported-packages`` list of package name strings (comments allowed in YAML).
+
+    Optional ``supported-packages-tests.yaml`` beside the main file: top-level ``test-packages`` mapping from
+    package name to a test_package spec (same shape as before: type, script, command, cmake, files, ...).
+    A spec is applied only when that package name also appears in ``supported-packages``.
+    """
     with open(path, encoding="utf-8") as f:
-        data = json.load(f)
+        data = yaml.safe_load(f)
+    if not isinstance(data, dict):
+        raise ValueError(f"{path.name}: root must be a mapping")
     raw_list = data.get("supported-packages")
-    if not raw_list:
-        raise ValueError("no non-empty 'supported-packages' list")
+    if not isinstance(raw_list, list) or not raw_list:
+        raise ValueError(f"{path.name}: no non-empty 'supported-packages' list")
     seen: set[str] = set()
     names: list[str] = []
-    test_package_by_name: dict[str, dict] = {}
     for i, item in enumerate(raw_list):
-        if isinstance(item, str):
-            name = item.strip()
-            if not name:
-                raise ValueError(f"supported-packages[{i}]: empty string")
-        elif isinstance(item, dict):
-            raw_name = item.get("name")
-            if not isinstance(raw_name, str) or not raw_name.strip():
-                raise ValueError(f"supported-packages[{i}]: object needs non-empty string 'name'")
-            name = raw_name.strip()
-            tp = item.get("test_package")
-            if tp is not None:
-                if not isinstance(tp, dict):
-                    raise ValueError(f"supported-packages[{i}] ({name!r}): 'test_package' must be an object")
-                test_package_by_name[name] = tp
-        else:
+        if not isinstance(item, str):
             raise ValueError(
-                f"supported-packages[{i}]: expected string or object, got {type(item).__name__}"
+                f"{path.name} supported-packages[{i}]: expected string "
+                f"(put test_package under supported-packages-tests.yaml), got {type(item).__name__}"
             )
+        name = item.strip()
+        if not name:
+            raise ValueError(f"{path.name} supported-packages[{i}]: empty string")
         if name in seen:
-            print(f"Warning: duplicate entry {name!r} in supported-packages.json, skipping")
+            print(f"Warning: duplicate entry {name!r} in {path.name}, skipping")
             continue
         seen.add(name)
         names.append(name)
+
+    test_package_by_name: dict[str, dict] = {}
+    tests_path = path.parent / "supported-packages-tests.yaml"
+    if tests_path.exists():
+        with open(tests_path, encoding="utf-8") as tf:
+            tdata = yaml.safe_load(tf)
+        if tdata is None:
+            tdata = {}
+        if not isinstance(tdata, dict):
+            raise ValueError(f"{tests_path.name}: root must be a mapping")
+        tp_map = tdata.get("test-packages")
+        if tp_map is None:
+            tp_map = {}
+        if not isinstance(tp_map, dict):
+            raise ValueError(f"{tests_path.name}: 'test-packages' must be a mapping")
+        supported_set = set(names)
+        for raw_key, spec in tp_map.items():
+            if not isinstance(raw_key, str) or not raw_key.strip():
+                raise ValueError(f"{tests_path.name}: test-packages keys must be non-empty strings")
+            key = raw_key.strip()
+            if key not in supported_set:
+                print(
+                    f"Warning: test-packages entry {key!r} not in {path.name} supported list, ignoring"
+                )
+                continue
+            if not isinstance(spec, dict):
+                raise ValueError(f"{tests_path.name} test-packages[{key!r}]: must be a mapping")
+            test_package_by_name[key] = spec
+
     return names, test_package_by_name
 
 

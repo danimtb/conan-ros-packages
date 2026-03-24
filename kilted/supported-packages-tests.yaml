@@ -1,0 +1,48 @@
+# test_package specs; applied only when the package is also listed in supported-packages.yaml
+# Entries follow the same order as supported-packages.yaml.
+test-packages:
+  ament_package:
+    type: python
+    script: |
+      from ament_package.templates import get_environment_hook_template_path
+
+      print("hello from ament_package test_package")
+      print(get_environment_hook_template_path("hello"))
+
+  ament_cpplint:
+    type: run
+    command: ament_cpplint --help
+
+  ament_lint_cmake:
+    type: run
+    command: ament_lint_cmake --help
+
+  ament_xmllint:
+    type: run
+    command: ament_xmllint --help
+
+  ament_cmake_core:
+    type: cmake
+    cmake: |
+      cmake_minimum_required(VERSION 3.15)
+      project(ament_cmake_core_test_package CXX)
+
+      find_package(ament_cmake_core CONFIG REQUIRED)
+
+      ament_package()
+
+    files:
+      package.xml: |
+        <?xml version="1.0"?>
+        <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+        <package format="2">
+          <name>ament_cmake_core_test_package</name>
+          <version>0.1.0</version>
+          <description>Test package for ament_cmake_core</description>
+          <maintainer email="fake@email.com">Fake Maintainer</maintainer>
+          <license>MIT</license>
+
+          <export>
+            <build_type>ament_cmake</build_type>
+          </export>
+        </package>

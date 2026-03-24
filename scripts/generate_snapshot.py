@@ -171,18 +171,18 @@ def main() -> None:
         "--work-dir",
         default="kilted",
         metavar="REL_PATH",
-        help="Workspace under repo root (default: kilted): distribution.yaml, supported-packages.json, output",
+        help="Workspace under repo root (default: kilted): distribution.yaml, supported-packages.yaml, output",
     )
     p.add_argument(
         "--all-packages",
         action="store_true",
-        help="Snapshot every released package (ignore supported-packages.json)",
+        help="Snapshot every released package (ignore supported-packages.yaml)",
     )
     args = p.parse_args()
 
     ws = resolve_workspace_dir(args.work_dir)
     dist_path = ws / "distribution.yaml"
-    supported_path = ws / "supported-packages.json"
+    supported_path = ws / "supported-packages.yaml"
     out_path = ws / "rosdistro_snapshot.yaml"
 
     if not dist_path.exists():

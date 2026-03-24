@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Generate Conan recipes from repo-root templates/ (by package.xml build_type), conandata.yml, and packages-build-order.json (see --help).
 
-supported-packages.json entries may be package name strings or objects:
-  {"name": "<pkg>", "test_package": {...}}
-test_package/ is created only when that seed includes "test_package"; all other recipes (including transitive deps) have no test_package.
+supported-packages.yaml lists seed package names (strings only; YAML comments allowed).
+Optional supported-packages-tests.yaml (same directory) maps package names to test_package specs under
+``test-packages``; a test_package/ is generated only when the name appears in both files.
+All other recipes (including transitive deps) have no test_package.
 
 test_package types (templates under repo templates/test_package/<type>/):
   python — fields: script (required), path (optional, default src/example.py). Template conanfile + written script file.
@@ -327,7 +328,7 @@ def _write_test_package_run(
 def apply_test_package_override(
     recipe_dir: Path, package_name: str, spec: dict, *, templates_root: Path
 ) -> None:
-    """Write test_package/ from templates/test_package/<type>/ plus supported-packages.json fields."""
+    """Write test_package/ from templates/test_package/<type>/ plus supported-packages-tests.yaml fields."""
     tp = recipe_dir / "test_package"
     if tp.is_dir():
         shutil.rmtree(tp)
@@ -423,7 +424,7 @@ def main() -> None:
     args = p.parse_args()
 
     ws = resolve_workspace_dir(args.work_dir)
-    supported_path = ws / "supported-packages.json"
+    supported_path = ws / "supported-packages.yaml"
     snapshot_path = ws / "rosdistro_snapshot.yaml"
     order_path = ws / "packages-build-order.json"
     recipes_dir = ws / "recipes"
@@ -453,7 +454,7 @@ def main() -> None:
 
     added = sorted(closure - set(seeds))
     if added:
-        print("Transitive closure (not in supported-packages.json): " + ", ".join(added))
+        print("Transitive closure (not in supported-packages.yaml): " + ", ".join(added))
 
     refs_by_pkg: dict[str, list[str]] = {}
     written: set[str] = set()
