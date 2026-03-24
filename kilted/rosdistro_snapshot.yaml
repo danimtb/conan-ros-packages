@@ -1,7 +1,7 @@
 # rosdistro_snapshot.yaml — Conan-focused snapshot + package.xml deps/export
-# Generated at 2026-03-23T15:46:48Z UTC
+# Generated at 2026-03-24T11:20:35Z UTC
 # Source: C:\Users\danielm\repos\conan-ros-kilted\kilted\distribution.yaml
-# Packages: 4
+# Packages: 11
 ament_cmake_core:
   package_xml_depends:
     buildtool_depend:
@@ -40,6 +40,73 @@ ament_cmake_libraries:
   tag: release/kilted/ament_cmake_libraries/2.7.5-1
   url: https://github.com/ros2-gbp/ament_cmake-release.git
   version: 2.7.5
+ament_copyright:
+  package_xml_depends:
+    exec_depend:
+    - ament_lint
+    - python3-importlib-metadata
+    test_depend:
+    - ament_flake8
+    - ament_pep257
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_copyright/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_cpplint:
+  package_xml_depends:
+    test_depend:
+    - ament_copyright
+    - ament_flake8
+    - ament_pep257
+    - ament_xmllint
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_cpplint/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_flake8:
+  package_xml_depends:
+    exec_depend:
+    - ament_lint
+    - python3-flake8
+    - python3-flake8-blind-except
+    - python3-flake8-builtins
+    - python3-flake8-class-newline
+    - python3-flake8-comprehensions
+    - python3-flake8-deprecated
+    - python3-flake8-docstrings
+    - python3-flake8-import-order
+    - python3-flake8-quotes
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_flake8/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_lint:
+  package_xml_depends:
+    test_depend:
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_lint/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_lint_cmake:
+  package_xml_depends:
+    test_depend:
+    - ament_copyright
+    - ament_flake8
+    - ament_pep257
+    - ament_xmllint
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_lint_cmake/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
 ament_package:
   package_xml_depends:
     buildtool_export_depend:
@@ -55,3 +122,31 @@ ament_package:
   tag: release/kilted/ament_package/0.17.2-2
   url: https://github.com/ros2-gbp/ament_package-release.git
   version: 0.17.2
+ament_pep257:
+  package_xml_depends:
+    exec_depend:
+    - ament_lint
+    - pydocstyle
+    test_depend:
+    - ament_flake8
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_pep257/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2
+ament_xmllint:
+  package_xml_depends:
+    exec_depend:
+    - ament_lint
+    - libxml2-utils
+    test_depend:
+    - ament_copyright
+    - ament_flake8
+    - ament_pep257
+    - python3-pytest
+  package_xml_export:
+    build_type: ament_python
+  tag: release/kilted/ament_xmllint/0.19.2-2
+  url: https://github.com/ros2-gbp/ament_lint-release.git
+  version: 0.19.2

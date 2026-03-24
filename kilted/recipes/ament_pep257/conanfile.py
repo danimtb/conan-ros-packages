@@ -5,8 +5,8 @@ from conan.tools.files import copy, get, load, rmdir
 from conan.tools.system import PyEnv
 
 
-class AmentPackageRecipe(ConanFile):
-    name = "ament_package"
+class AmentPep257Recipe(ConanFile):
+    name = "ament_pep257"
 
     def set_version(self):
         self.version = list(self.conan_data["sources"].keys())[0]
@@ -31,5 +31,5 @@ class AmentPackageRecipe(ConanFile):
             if "console_scripts" in setup_py:
                 pyenv = PyEnv(self)
                 self.run(f"{pyenv.env_exe} -m pip install .", cwd=self.package_folder)
-                copy(self, "ament_package*", src=os.path.join(pyenv.env_dir, "Scripts"), dst=self.package_folder)
+                copy(self, "ament_pep257*", src=os.path.join(pyenv.env_dir, "Scripts"), dst=self.package_folder)
                 #rmdir(self, pyenv.env_dir)  # Removing the pyevn directory causes the console scripts to not run

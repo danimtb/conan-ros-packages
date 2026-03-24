@@ -18,6 +18,27 @@
             }
         },
         "ament_cmake_libraries",
-        "ament_cmake_export_dependencies"
+        "ament_cmake_export_dependencies",
+        {
+            "name": "ament_lint_cmake",
+            "test_package": {
+                "type": "run",
+                "command": "ament_lint_cmake --help"
+            }
+        },
+        {
+            "name": "ament_cpplint",
+            "test_package": {
+                "type": "run",
+                "command": "ament_cpplint --help"
+            }
+        },
+        {
+            "name": "ament_xmllint",
+            "test_package": {
+                "type": "run",
+                "command": "ament_xmllint --help"
+            }
+        }
     ]
 }
