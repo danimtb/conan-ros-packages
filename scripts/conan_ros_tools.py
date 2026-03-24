@@ -76,7 +76,29 @@ def _xml_local_name(tag: str) -> str:
     return tag
 
 
-def fetch_package_xml_depends(raw_url: str, timeout: float = 30.0) -> dict[str, list[str]]:
+def _parse_package_xml_depends_and_export(root: ET.Element) -> tuple[dict[str, list[str]], dict[str, str]]:
+    buckets: dict[str, list[str]] = defaultdict(list)
+    export_kv: dict[str, str] = {}
+    for el in root:
+        kind = _xml_local_name(el.tag)
+        if kind in _PACKAGE_XML_DEPEND_TAGS:
+            text = (el.text or "").strip()
+            if text:
+                buckets[kind].append(text)
+        elif kind == "export":
+            for child in el:
+                ck = _xml_local_name(child.tag)
+                ct = (child.text or "").strip()
+                if ct:
+                    export_kv[ck] = ct
+    deps = {k: sorted(set(v)) for k, v in sorted(buckets.items()) if v}
+    export_out = dict(sorted(export_kv.items())) if export_kv else {}
+    return deps, export_out
+
+
+def fetch_package_xml_depends_and_export(
+    raw_url: str, timeout: float = 30.0
+) -> tuple[dict[str, list[str]], dict[str, str]]:
     req = urllib.request.Request(
         raw_url,
         headers={"User-Agent": "conan-ros-kilted (dependency metadata)"},
@@ -92,16 +114,12 @@ def fetch_package_xml_depends(raw_url: str, timeout: float = 30.0) -> dict[str, 
     except ET.ParseError as e:
         raise RuntimeError(f"invalid XML from {raw_url}: {e}") from e
 
-    buckets: dict[str, list[str]] = defaultdict(list)
-    for el in root:
-        kind = _xml_local_name(el.tag)
-        if kind not in _PACKAGE_XML_DEPEND_TAGS:
-            continue
-        text = (el.text or "").strip()
-        if text:
-            buckets[kind].append(text)
+    return _parse_package_xml_depends_and_export(root)
 
-    return {k: sorted(set(v)) for k, v in sorted(buckets.items()) if v}
+
+def fetch_package_xml_depends(raw_url: str, timeout: float = 30.0) -> dict[str, list[str]]:
+    deps, _ = fetch_package_xml_depends_and_export(raw_url, timeout)
+    return deps
 
 
 def ros_snapshot_dep_names_from_package_xml(
@@ -116,23 +134,46 @@ def ros_snapshot_dep_names_from_package_xml(
     return sorted(names)
 
 
-def load_supported_package_names(path: Path) -> list[str]:
+def load_supported_packages(path: Path) -> tuple[list[str], dict[str, dict]]:
+    """Parse supported-packages.json: seed names and optional per-package options (e.g. test_package)."""
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
     raw_list = data.get("supported-packages")
     if not raw_list:
         raise ValueError("no non-empty 'supported-packages' list")
     seen: set[str] = set()
-    out: list[str] = []
-    for name in raw_list:
-        if not isinstance(name, str):
-            raise ValueError(f"supported-packages must be strings, got {name!r}")
+    names: list[str] = []
+    test_package_by_name: dict[str, dict] = {}
+    for i, item in enumerate(raw_list):
+        if isinstance(item, str):
+            name = item.strip()
+            if not name:
+                raise ValueError(f"supported-packages[{i}]: empty string")
+        elif isinstance(item, dict):
+            raw_name = item.get("name")
+            if not isinstance(raw_name, str) or not raw_name.strip():
+                raise ValueError(f"supported-packages[{i}]: object needs non-empty string 'name'")
+            name = raw_name.strip()
+            tp = item.get("test_package")
+            if tp is not None:
+                if not isinstance(tp, dict):
+                    raise ValueError(f"supported-packages[{i}] ({name!r}): 'test_package' must be an object")
+                test_package_by_name[name] = tp
+        else:
+            raise ValueError(
+                f"supported-packages[{i}]: expected string or object, got {type(item).__name__}"
+            )
         if name in seen:
             print(f"Warning: duplicate entry {name!r} in supported-packages.json, skipping")
             continue
         seen.add(name)
-        out.append(name)
-    return out
+        names.append(name)
+    return names, test_package_by_name
+
+
+def load_supported_package_names(path: Path) -> list[str]:
+    names, _ = load_supported_packages(path)
+    return names
 
 
 def discover_transitive_closure(
@@ -180,8 +221,10 @@ def discover_transitive_closure(
             raw_pkg = git_url_to_raw_package_xml_url(url, tag)
             if raw_pkg:
                 try:
-                    dep_dict = fetch_package_xml_depends(raw_pkg)
+                    dep_dict, export_meta = fetch_package_xml_depends_and_export(raw_pkg)
                     entry["package_xml_depends"] = dep_dict
+                    if export_meta:
+                        entry["package_xml_export"] = export_meta
                 except RuntimeError as e:
                     print(f"Warning: {name}: {e}")
             else:

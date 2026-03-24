@@ -12,7 +12,7 @@ import yaml
 
 from conan_ros_tools import (
     discover_transitive_closure,
-    fetch_package_xml_depends,
+    fetch_package_xml_depends_and_export,
     git_url_to_raw_package_xml_url,
     load_supported_package_names,
     resolve_workspace_dir,
@@ -140,11 +140,13 @@ def enrich_snapshot_package_xml_depends(snapshot: dict[str, dict], *, skip_fetch
             print(f"Warning: {name}: skip package.xml (non-GitHub release url)")
             continue
         try:
-            deps = fetch_package_xml_depends(raw)
+            deps, export_meta = fetch_package_xml_depends_and_export(raw)
         except RuntimeError as e:
             print(f"Warning: {name}: {e}")
             continue
         entry["package_xml_depends"] = deps
+        if export_meta:
+            entry["package_xml_export"] = export_meta
 
 
 def dump_snapshot_yaml(snapshot: dict, path: Path, header_lines: list[str] | None = None) -> None:
@@ -211,7 +213,7 @@ def main() -> None:
 
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     header = [
-        "# rosdistro_snapshot.yaml — Conan-focused snapshot + package.xml deps",
+        "# rosdistro_snapshot.yaml — Conan-focused snapshot + package.xml deps/export",
         f"# Generated at {ts} UTC",
         f"# Source: {dist_path}",
         f"# Packages: {len(snapshot)}",
