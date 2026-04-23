@@ -1,4 +1,4 @@
-# conan-ros
+# conan-ros-packages
 
 Tools under `scripts/` read a REP-143 `distribution.yaml` and produce Conan-oriented metadata for a **workspace** directory per ROS distro (e.g. `kilted/`): snapshot YAML, per-package `conandata.yml`, and `packages-build-order.json`.
 
