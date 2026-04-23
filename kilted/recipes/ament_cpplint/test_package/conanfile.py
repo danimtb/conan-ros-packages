@@ -8,4 +8,5 @@ class AmentCpplintTestConan(ConanFile):
         self.requires(self.tested_reference_str)
 
     def test(self):
-        self.run("ament_cpplint --help", env=["conanrun"])
+        for cmd in ["ament_cpplint --help"]:
+            self.run(cmd, env=["conanrun"])

@@ -32,6 +32,7 @@ class AmentCmakeLibrariesRecipe(ConanFile):
         pyenv.install(["catkin-pkg"])
         pyenv.generate()
         tc = CMakeToolchain(self)
+        tc.cache_variables["BUILD_TESTING"] = False
         tc.cache_variables["Python_ROOT_DIR"] = pyenv.env_dir
         tc.cache_variables["Python_EXECUTABLE"] = pyenv.env_exe
         tc.cache_variables["Python3_EXECUTABLE"] = pyenv.env_exe

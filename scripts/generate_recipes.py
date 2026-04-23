@@ -9,7 +9,7 @@ All other recipes (including transitive deps) have no test_package.
 test_package types (templates under repo templates/test_package/<type>/):
   python — fields: script (required), path (optional, default src/example.py). Template conanfile + written script file.
   cmake — fields: cmake (required), path (optional, default CMakeLists.txt), files (optional). Template conanfile + CMakeLists body from JSON.
-  run — field: command (required). Template conanfile with embedded command literal.
+  run — field command (one shell string) or commands (non-empty list of strings); each run with conanrun env.
 """
 
 from __future__ import annotations
@@ -304,15 +304,40 @@ def _write_test_package_cmake(
             out.write_text(body, encoding="utf-8", newline="\n")
 
 
+def _run_test_package_commands(package_name: str, spec: dict) -> list[str]:
+    """Resolve command (single) or commands (list); mutually exclusive."""
+    single = spec.get("command")
+    multi = spec.get("commands")
+    if single is not None and multi is not None:
+        raise SystemExit(
+            f"{package_name}: test_package type 'run' use either 'command' or 'commands', not both"
+        )
+    if multi is not None:
+        if not isinstance(multi, list) or not multi:
+            raise SystemExit(
+                f"{package_name}: test_package type 'run' with 'commands' requires a non-empty list "
+                "of shell strings (each run with conanrun env)"
+            )
+        out: list[str] = []
+        for i, c in enumerate(multi):
+            if not isinstance(c, str) or not c.strip():
+                raise SystemExit(
+                    f"{package_name}: test_package 'commands'[{i}] must be a non-empty string"
+                )
+            out.append(c.strip())
+        return out
+    if isinstance(single, str) and single.strip():
+        return [single.strip()]
+    raise SystemExit(
+        f"{package_name}: test_package type 'run' requires a non-empty string 'command' "
+        "or a non-empty list of strings 'commands'"
+    )
+
+
 def _write_test_package_run(
     recipe_dir: Path, package_name: str, spec: dict, *, templates_root: Path
 ) -> None:
-    command = spec.get("command")
-    if not isinstance(command, str) or not command.strip():
-        raise SystemExit(
-            f"{package_name}: test_package type 'run' requires a non-empty string 'command' "
-            "(shell command run with conanrun env, e.g. a CLI installed by the package)"
-        )
+    commands = _run_test_package_commands(package_name, spec)
     tp = recipe_dir / "test_package"
     tpl = templates_root / "test_package" / "run"
     if not tpl.is_dir():
@@ -321,7 +346,7 @@ def _write_test_package_run(
         tpl,
         tp,
         package_name=package_name,
-        extra_substitutions={"{{command_repr}}": json.dumps(command.strip())},
+        extra_substitutions={"{{commands_json}}": json.dumps(commands)},
     )
 
 

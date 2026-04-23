@@ -8,4 +8,5 @@ class AmentLintCmakeTestConan(ConanFile):
         self.requires(self.tested_reference_str)
 
     def test(self):
-        self.run("ament_lint_cmake --help", env=["conanrun"])
+        for cmd in ["ament_lint_cmake --help"]:
+            self.run(cmd, env=["conanrun"])

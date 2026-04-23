@@ -1,0 +1,7 @@
+"sources":
+  "3.1.0":
+    "url": "https://github.com/ros2-gbp/uncrustify_vendor-release/archive/refs/tags/release%2Fkilted%2Funcrustify_vendor%2F3.1.0-2.tar.gz"
+"requires":
+  "3.1.0":
+  - "ament_cmake/2.7.5"
+  - "ament_cmake_vendor_package/2.7.5"

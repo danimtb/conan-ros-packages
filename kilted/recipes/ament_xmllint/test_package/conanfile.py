@@ -8,4 +8,5 @@ class AmentXmllintTestConan(ConanFile):
         self.requires(self.tested_reference_str)
 
     def test(self):
-        self.run("ament_xmllint --help", env=["conanrun"])
+        for cmd in ["ament_xmllint --help"]:
+            self.run(cmd, env=["conanrun"])

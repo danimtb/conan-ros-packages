@@ -8,4 +8,5 @@ class {{test_recipe_class}}(ConanFile):
         self.requires(self.tested_reference_str)
 
     def test(self):
-        self.run({{command_repr}}, env=["conanrun"])
+        for cmd in {{commands_json}}:
+            self.run(cmd, env=["conanrun"])

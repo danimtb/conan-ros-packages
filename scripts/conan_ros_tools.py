@@ -141,7 +141,7 @@ def load_supported_packages(path: Path) -> tuple[list[str], dict[str, dict]]:
     Main file: top-level ``supported-packages`` list of package name strings (comments allowed in YAML).
 
     Optional ``supported-packages-tests.yaml`` beside the main file: top-level ``test-packages`` mapping from
-    package name to a test_package spec (same shape as before: type, script, command, cmake, files, ...).
+    package name to a test_package spec (type, script, command or commands, cmake, files, ...).
     A spec is applied only when that package name also appears in ``supported-packages``.
     """
     with open(path, encoding="utf-8") as f:

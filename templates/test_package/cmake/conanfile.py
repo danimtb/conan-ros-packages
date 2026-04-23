@@ -1,3 +1,4 @@
+import os
 from conan import ConanFile
 from conan.tools.cmake import CMake, cmake_layout
 
@@ -18,4 +19,6 @@ class {{test_recipe_class}}(ConanFile):
         cmake_layout(self)
 
     def test(self):
-        pass
+        ext = ".exe" if self.settings.os == "Windows" else ""
+        if os.path.exists(exe := os.path.join(self.cpp.build.bindir, f"main{ext}")):
+            self.run(exe, env="conanrun")

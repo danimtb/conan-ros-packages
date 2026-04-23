@@ -1,0 +1,8 @@
+"sources":
+  "0.19.2":
+    "url": "https://github.com/ros2-gbp/ament_lint-release/archive/refs/tags/release%2Fkilted%2Fament_cmake_pep257%2F0.19.2-2.tar.gz"
+"requires":
+  "0.19.2":
+  - "ament_cmake_core/2.7.5"
+  - "ament_cmake_test/2.7.5"
+  - "ament_pep257/0.19.2"
