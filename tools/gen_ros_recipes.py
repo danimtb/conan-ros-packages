@@ -127,6 +127,16 @@ def _archive_url(entry: dict, package: str) -> str:
     return GBP_ARCHIVE.format(repo=repo, tag=tag)
 
 
+def _write(path: Path, text: str) -> None:
+    """Write generated text with LF endings on every platform.
+
+    `Path.write_text` translates "\\n" to os.linesep, so the same generator run would
+    produce CRLF files on Windows and LF files elsewhere. The committed index has to be
+    byte-identical whoever regenerates it, or the drift check fails on the other OS.
+    """
+    path.write_text(text, encoding="utf-8", newline="\n")
+
+
 def _fetch_archive(url: str, cache_dir: Path) -> tuple[str, bytes]:
     """Download once, keep it around: the sha256 needs the bytes anyway."""
     cache_dir.mkdir(parents=True, exist_ok=True)
@@ -182,9 +192,9 @@ def _write_recipe(out_root: Path, spec, source: dict | None = None) -> None:
     if recipe_dir.exists():
         shutil.rmtree(recipe_dir)
     (recipe_dir / "all").mkdir(parents=True, exist_ok=True)
-    (recipe_dir / "config.yml").write_text(
+    _write(
+        recipe_dir / "config.yml",
         yaml.safe_dump({"versions": {spec.version: {"folder": "all"}}}, sort_keys=False),
-        encoding="utf-8",
     )
     conandata = {}
     if source:
@@ -202,13 +212,8 @@ def _write_recipe(out_root: Path, spec, source: dict | None = None) -> None:
             src = Path(patch["src"])
             shutil.copy2(src, patches_dest / Path(patch["patch_file"]).name)
     if conandata:
-        (recipe_dir / "all" / "conandata.yml").write_text(
-            yaml.safe_dump(conandata, sort_keys=False),
-            encoding="utf-8",
-        )
-    (recipe_dir / "all" / "conanfile.py").write_text(
-        ros_pkgxml.render_recipe(spec), encoding="utf-8"
-    )
+        _write(recipe_dir / "all" / "conandata.yml", yaml.safe_dump(conandata, sort_keys=False))
+    _write(recipe_dir / "all" / "conanfile.py", ros_pkgxml.render_recipe(spec))
 
 
 def _extra_packages(config: rdi.DistroConfig) -> list[dict]:
@@ -776,13 +781,13 @@ def main() -> None:
     if args.check:
         return _report_lock_drift(config, lock)
     if args.lock:
-        config.lock_path.write_text(lock, encoding="utf-8")
+        _write(config.lock_path, lock)
         print(f"\nWrote {config.lock_path}")
     if args.dry_run:
         print("dry-run: no recipes written")
         return
     report_path = args.output / ".report.json"
-    report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    _write(report_path, json.dumps(report, indent=2) + "\n")
     print(f"\nWrote {len(report['packages'])} recipes to {args.output / 'recipes'}")
     print(f"Wrote {report_path}")
 
