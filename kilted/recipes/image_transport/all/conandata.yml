@@ -1,0 +1,4 @@
+sources:
+  6.1.4:
+    url: https://github.com/ros2-gbp/image_common-release/archive/refs/tags/release/kilted/image_transport/6.1.4-1.tar.gz
+    sha256: 9b5508ef0809d25bc15cf5eb8065de8ae12e08309280688e117b4f5fb1722697

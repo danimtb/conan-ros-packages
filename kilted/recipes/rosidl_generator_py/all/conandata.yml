@@ -1,0 +1,4 @@
+sources:
+  0.24.2:
+    url: https://github.com/ros2-gbp/rosidl_python-release/archive/refs/tags/release/kilted/rosidl_generator_py/0.24.2-1.tar.gz
+    sha256: 94830c24c39b4e2dd26f4f51b2ebcdc83304a554ab39671f918726e923bd661d

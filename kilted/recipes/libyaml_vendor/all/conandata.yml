@@ -1,0 +1,4 @@
+sources:
+  1.7.1:
+    url: https://github.com/ros2-gbp/libyaml_vendor-release/archive/refs/tags/release/kilted/libyaml_vendor/1.7.1-2.tar.gz
+    sha256: a6af5efa12d5364eb808e630158908bb54679b44571a6598c71c586cdbc4fa79

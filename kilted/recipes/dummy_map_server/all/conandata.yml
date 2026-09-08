@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/dummy_map_server/0.36.5-1.tar.gz
+    sha256: 6e35d8ff98927dbe5cd0d8c2c1433f1a2e3c4e0ef26bea6708cd2ad704c30b4c

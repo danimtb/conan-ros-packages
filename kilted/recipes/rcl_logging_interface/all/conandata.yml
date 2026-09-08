@@ -1,0 +1,4 @@
+sources:
+  3.2.4:
+    url: https://github.com/ros2-gbp/rcl_logging-release/archive/refs/tags/release/kilted/rcl_logging_interface/3.2.4-1.tar.gz
+    sha256: ec81d39f956f09d86a2f9923a124364d4d61ceae440fd3cedde6c6d0a18f5a2d

@@ -1,0 +1,4 @@
+sources:
+  6.1.4:
+    url: https://github.com/ros2-gbp/image_common-release/archive/refs/tags/release/kilted/camera_calibration_parsers/6.1.4-1.tar.gz
+    sha256: 76a1335372f9676eebeb84464be5ef4d947d4c5deb54680ff47718119d2b68a8

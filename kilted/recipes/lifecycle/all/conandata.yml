@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/lifecycle/0.36.5-1.tar.gz
+    sha256: 2f5fb347ffa804807f27ba48569b10b02bebe610e295fe1e19b8ed4ced7326f2

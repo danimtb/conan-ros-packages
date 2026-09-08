@@ -1,0 +1,4 @@
+sources:
+  2.3.2:
+    url: https://github.com/ros2-gbp/rcl_interfaces-release/archive/refs/tags/release/kilted/rosgraph_msgs/2.3.2-1.tar.gz
+    sha256: 12eddf614a9e058396241a41458c29731735c8781de22ce5d118adc7ee49235c

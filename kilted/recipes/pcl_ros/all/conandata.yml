@@ -1,0 +1,4 @@
+sources:
+  2.8.0:
+    url: https://github.com/ros2-gbp/perception_pcl-release/archive/refs/tags/release/kilted/pcl_ros/2.8.0-1.tar.gz
+    sha256: d8de1d6e7ad721f95eae7c26b20dbb9c932063de5eedea55aed7efe46fc0b1fa

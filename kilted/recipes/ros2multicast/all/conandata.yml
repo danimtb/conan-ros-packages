@@ -1,0 +1,4 @@
+sources:
+  0.38.3:
+    url: https://github.com/ros2-gbp/ros2cli-release/archive/refs/tags/release/kilted/ros2multicast/0.38.3-2.tar.gz
+    sha256: 21d799fc2bc488b436bc9de61e7fe3374e41f7004856df0eeeb2458034d1c840

@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/dummy_sensors/0.36.5-1.tar.gz
+    sha256: e9099b155278e0a03d5025e3899380b3a97ce5b85c6dcb599af0dbe9740a90d0

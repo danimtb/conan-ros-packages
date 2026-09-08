@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/composition/0.36.5-1.tar.gz
+    sha256: 2aa7009455b6d8e3388976c1e307f16ec091e269fa95dcf98abe779a75bea12a

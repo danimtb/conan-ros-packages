@@ -1,0 +1,4 @@
+sources:
+  15.0.13:
+    url: https://github.com/ros2-gbp/rviz-release/archive/refs/tags/release/kilted/rviz_rendering/15.0.13-1.tar.gz
+    sha256: 836574a6e09973c2121f4d87f5b8278deec02e78af09142591ec91b61601cb01

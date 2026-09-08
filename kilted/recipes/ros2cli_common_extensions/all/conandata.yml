@@ -1,0 +1,4 @@
+sources:
+  0.4.1:
+    url: https://github.com/ros2-gbp/ros2cli_common_extensions-release/archive/refs/tags/release/kilted/ros2cli_common_extensions/0.4.1-1.tar.gz
+    sha256: 3d80407eba38fb2fe41552902fe202e98c867e0ba08502bb4b3cf1660d69362b

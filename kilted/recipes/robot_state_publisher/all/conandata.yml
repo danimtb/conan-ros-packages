@@ -1,0 +1,4 @@
+sources:
+  3.4.3:
+    url: https://github.com/ros2-gbp/robot_state_publisher-release/archive/refs/tags/release/kilted/robot_state_publisher/3.4.3-1.tar.gz
+    sha256: 76f995ad337d8877a412eb495a29588571c6a26dc167c15071a8f5c1ddc2c552

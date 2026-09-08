@@ -1,0 +1,4 @@
+sources:
+  4.1.0:
+    url: https://github.com/ros2-gbp/vision_opencv-release/archive/refs/tags/release/kilted/vision_opencv/4.1.0-2.tar.gz
+    sha256: d9513ec646ffa93048333a659a2ac5f72288c6604d871337bba117551ad66d6b

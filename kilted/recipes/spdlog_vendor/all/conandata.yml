@@ -1,0 +1,4 @@
+sources:
+  1.7.0:
+    url: https://github.com/ros2-gbp/spdlog_vendor-release/archive/refs/tags/release/kilted/spdlog_vendor/1.7.0-2.tar.gz
+    sha256: f52d154391d65a4dffc8350eafae0a0a3ab01f13147a8ac31f9268b1e145ab91

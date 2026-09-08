@@ -1,0 +1,4 @@
+sources:
+  2.12.3:
+    url: https://github.com/ros2-gbp/urdf-release/archive/refs/tags/release/kilted/urdf/2.12.3-1.tar.gz
+    sha256: 5b7f997488041bc136b09f1f085b9a956cff8b447a778debd5e6b22c8c6158fa

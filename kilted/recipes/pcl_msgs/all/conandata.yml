@@ -1,0 +1,4 @@
+sources:
+  1.0.0:
+    url: https://github.com/ros2-gbp/pcl_msgs-release/archive/refs/tags/release/kilted/pcl_msgs/1.0.0-9.tar.gz
+    sha256: d68a277faf0e12b47fea1c4ab01120b164c32c24e09fd22c32a6b6fdf6e484d2

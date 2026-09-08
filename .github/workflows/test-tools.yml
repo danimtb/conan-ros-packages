@@ -1,0 +1,26 @@
+name: Test tools
+
+on:
+  pull_request:
+    paths:
+      - "tools/**"
+      - "test/**"
+      - ".github/workflows/test-tools.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tools/**"
+      - "test/**"
+      - ".github/workflows/test-tools.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - run: python -m unittest discover -s test -v

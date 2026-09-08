@@ -1,0 +1,4 @@
+sources:
+  4.9.6:
+    url: https://github.com/ros2-gbp/rosidl-release/archive/refs/tags/release/kilted/rosidl_cmake/4.9.6-1.tar.gz
+    sha256: 7637df80180d27fb47bea514b4d86c162a3694bddecd7fa830bc38090d04e3f5

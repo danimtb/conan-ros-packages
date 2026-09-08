@@ -1,0 +1,4 @@
+sources:
+  29.5.8:
+    url: https://github.com/ros2-gbp/rclcpp-release/archive/refs/tags/release/kilted/rclcpp/29.5.8-1.tar.gz
+    sha256: b777ffd20de30bd2c3e0c2a2b6d6d66e07ee797cf2da662c94eadfec81a92e69

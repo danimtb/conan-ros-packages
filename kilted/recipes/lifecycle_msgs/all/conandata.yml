@@ -1,0 +1,4 @@
+sources:
+  2.3.2:
+    url: https://github.com/ros2-gbp/rcl_interfaces-release/archive/refs/tags/release/kilted/lifecycle_msgs/2.3.2-1.tar.gz
+    sha256: f0a9e5c991a9c5e9fae93eda55ee826c11c95ef09276872d8317880571bfaed3

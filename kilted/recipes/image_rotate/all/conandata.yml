@@ -1,0 +1,4 @@
+sources:
+  6.0.12:
+    url: https://github.com/ros2-gbp/image_pipeline-release/archive/refs/tags/release/kilted/image_rotate/6.0.12-1.tar.gz
+    sha256: 796bcf6d82fc718c720a5f7e2104213fb449f932b7af84fd9e047f091d49d41a

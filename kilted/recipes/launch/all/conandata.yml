@@ -1,0 +1,4 @@
+sources:
+  3.8.7:
+    url: https://github.com/ros2-gbp/launch-release/archive/refs/tags/release/kilted/launch/3.8.7-1.tar.gz
+    sha256: 7286ccaf732f56ea3294cfc92bd66cceecb595d60073d7b1c21a06e5e188f1de

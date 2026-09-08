@@ -1,0 +1,4 @@
+sources:
+  2.13.5:
+    url: https://github.com/ros2-gbp/rcpputils-release/archive/refs/tags/release/kilted/rcpputils/2.13.5-1.tar.gz
+    sha256: 52b91d4cef7617aa1c81e48a4858709aa32f4dc58303466e4ca23eac4e06c78b

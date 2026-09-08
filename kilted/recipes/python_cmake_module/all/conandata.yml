@@ -1,0 +1,4 @@
+sources:
+  0.12.0:
+    url: https://github.com/ros2-gbp/python_cmake_module-release/archive/refs/tags/release/kilted/python_cmake_module/0.12.0-2.tar.gz
+    sha256: 2edb8d1ce94bf97d5b647a948d2c7a39f945f43e451dcd422cea81e7df38821f

@@ -1,0 +1,4 @@
+sources:
+  1.11.4:
+    url: https://github.com/ros2-gbp/ament_index-release/archive/refs/tags/release/kilted/ament_index_cpp/1.11.4-1.tar.gz
+    sha256: 20728d8f69455d55a943f3e9719e10fd4fab6303d046fac4b11ad79b7aa33789

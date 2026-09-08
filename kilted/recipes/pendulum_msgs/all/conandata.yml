@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/pendulum_msgs/0.36.5-1.tar.gz
+    sha256: 75071e1e36f3eef1216a3b9922428bc87a95a9e864ed518409cf388ebdfbadc9

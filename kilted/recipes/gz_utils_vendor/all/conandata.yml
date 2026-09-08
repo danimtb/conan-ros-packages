@@ -1,0 +1,4 @@
+sources:
+  0.2.2:
+    url: https://github.com/ros2-gbp/gz_utils_vendor-release/archive/refs/tags/release/kilted/gz_utils_vendor/0.2.2-2.tar.gz
+    sha256: 959854564c4cd94a0ddf2404c965fd93ef8e326becf387061e8869d0f9e5297d

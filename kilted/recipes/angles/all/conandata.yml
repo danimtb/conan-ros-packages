@@ -1,0 +1,4 @@
+sources:
+  1.16.1:
+    url: https://github.com/ros2-gbp/angles-release/archive/refs/tags/release/kilted/angles/1.16.1-1.tar.gz
+    sha256: e6ae63c398180ac88ea8d051252137de363eaeb0bae5d4ede242bda153b1a38a

@@ -1,0 +1,4 @@
+sources:
+  6.0.12:
+    url: https://github.com/ros2-gbp/image_pipeline-release/archive/refs/tags/release/kilted/image_publisher/6.0.12-1.tar.gz
+    sha256: 8bd558dc2484bd92e07ea4c6c31899799eba6c57bffe9bc531d1fc7a4857990e

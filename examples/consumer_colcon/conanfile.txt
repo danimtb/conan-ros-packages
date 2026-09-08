@@ -1,0 +1,9 @@
+[requires]
+ament_cmake/2.7.5@ros-kilted
+rclcpp/29.5.8@ros-kilted
+
+[generators]
+CMakeToolchain
+CMakeDeps
+VirtualBuildEnv
+VirtualRunEnv

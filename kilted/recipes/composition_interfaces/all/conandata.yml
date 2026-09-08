@@ -1,0 +1,4 @@
+sources:
+  2.3.2:
+    url: https://github.com/ros2-gbp/rcl_interfaces-release/archive/refs/tags/release/kilted/composition_interfaces/2.3.2-1.tar.gz
+    sha256: 1399dd00296a00a4c13f1a5237727c728ccf89fcaa969f334e755274221ebecf

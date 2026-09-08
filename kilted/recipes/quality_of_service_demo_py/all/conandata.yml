@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/quality_of_service_demo_py/0.36.5-1.tar.gz
+    sha256: f2770021558b46174f4f2453c931fa49c1e14926b7eee7f169ed846d7b0ceb37

@@ -1,0 +1,10 @@
+[requires]
+rclcpp/29.5.8@ros-kilted
+
+[generators]
+CMakeToolchain
+CMakeDeps
+VirtualRunEnv
+
+[layout]
+cmake_layout

@@ -1,0 +1,4 @@
+sources:
+  2.7.5:
+    url: https://github.com/ros2-gbp/ament_cmake-release/archive/refs/tags/release/kilted/ament_cmake_test/2.7.5-1.tar.gz
+    sha256: f193e83f1b7a07c81c36829837c15bb97399d23a6a4b9e9ffc03de3f94e511e8

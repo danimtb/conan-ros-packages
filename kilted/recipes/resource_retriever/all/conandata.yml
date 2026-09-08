@@ -1,0 +1,4 @@
+sources:
+  3.7.1:
+    url: https://github.com/ros2-gbp/resource_retriever-release/archive/refs/tags/release/kilted/resource_retriever/3.7.1-1.tar.gz
+    sha256: c9b1ba1cd0f65eef16ee63f02bdc7b1ba406c052e7bfcffe28aeb069dec53280

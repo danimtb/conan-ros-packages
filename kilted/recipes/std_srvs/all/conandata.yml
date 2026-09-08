@@ -1,0 +1,4 @@
+sources:
+  5.5.2:
+    url: https://github.com/ros2-gbp/common_interfaces-release/archive/refs/tags/release/kilted/std_srvs/5.5.2-1.tar.gz
+    sha256: b4aa051f97945373696bd45ec65e59e26aa8364e7116e00181a87b37ef05780d

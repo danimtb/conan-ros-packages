@@ -1,0 +1,4 @@
+sources:
+  0.41.7:
+    url: https://github.com/ros2-gbp/geometry2-release/archive/refs/tags/release/kilted/tf2_bullet/0.41.7-1.tar.gz
+    sha256: f2d829cd7f878fd188e698fbe6fad34dd974b0dfb5546b634d2528be43e7dd5a

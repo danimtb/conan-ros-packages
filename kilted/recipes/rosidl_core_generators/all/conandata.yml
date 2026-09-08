@@ -1,0 +1,4 @@
+sources:
+  0.3.2:
+    url: https://github.com/ros2-gbp/rosidl_core-release/archive/refs/tags/release/kilted/rosidl_core_generators/0.3.2-1.tar.gz
+    sha256: 75f930808fd5503879269ea764400c25d94d76050c2f5370400e57736d211064

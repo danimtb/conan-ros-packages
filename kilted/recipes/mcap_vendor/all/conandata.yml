@@ -1,0 +1,4 @@
+sources:
+  0.32.0:
+    url: https://github.com/ros2-gbp/rosbag2-release/archive/refs/tags/release/kilted/mcap_vendor/0.32.0-2.tar.gz
+    sha256: 0ddb40c7f0dc2a992ec7b54068eed5b1561609d0cfff1dbe9a5e62e4c6969062

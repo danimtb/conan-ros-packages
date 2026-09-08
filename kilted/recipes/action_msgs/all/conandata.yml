@@ -1,0 +1,4 @@
+sources:
+  2.3.2:
+    url: https://github.com/ros2-gbp/rcl_interfaces-release/archive/refs/tags/release/kilted/action_msgs/2.3.2-1.tar.gz
+    sha256: 3ad6004947d13c87ad60b2aef6483504f11dbe4a1a485800bf801480b3a8a1a2

@@ -1,0 +1,4 @@
+sources:
+  0.7.1:
+    url: https://github.com/ros2-gbp/orocos_kdl_vendor-release/archive/refs/tags/release/kilted/orocos_kdl_vendor/0.7.1-1.tar.gz
+    sha256: ac8d67f4e02e43e257f8d287b481414823e2a06c0a38de852c161b95b072c2aa

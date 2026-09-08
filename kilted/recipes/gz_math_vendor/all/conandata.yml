@@ -1,0 +1,4 @@
+sources:
+  0.2.7:
+    url: https://github.com/ros2-gbp/gz_math_vendor-release/archive/refs/tags/release/kilted/gz_math_vendor/0.2.7-1.tar.gz
+    sha256: 6d6084a61cb5fc2fbb88deea289413673d945201c29a2ff1883e29bb2f68d7ad

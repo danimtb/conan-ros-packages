@@ -1,0 +1,4 @@
+sources:
+  0.32.0:
+    url: https://github.com/ros2-gbp/rosbag2-release/archive/refs/tags/release/kilted/rosbag2_compression/0.32.0-2.tar.gz
+    sha256: 1c944251cca309275d4111c7398b3b02c6968fdc74d775822df26cee4f07d814

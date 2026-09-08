@@ -1,0 +1,4 @@
+sources:
+  6.0.12:
+    url: https://github.com/ros2-gbp/image_pipeline-release/archive/refs/tags/release/kilted/stereo_image_proc/6.0.12-1.tar.gz
+    sha256: 57a66f97ba3543e03d633edf4e3db0b68467efa59529df8989993d6f8d1b6a1b

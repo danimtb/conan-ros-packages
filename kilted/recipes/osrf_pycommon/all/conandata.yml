@@ -1,0 +1,4 @@
+sources:
+  2.1.6:
+    url: https://github.com/ros2-gbp/osrf_pycommon-release/archive/refs/tags/release/kilted/osrf_pycommon/2.1.6-1.tar.gz
+    sha256: 2f5ad2f5b201bc15a60e1acd24174c674738aa3ce719aa795f17f9ddedb85bda

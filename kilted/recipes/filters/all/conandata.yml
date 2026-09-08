@@ -1,0 +1,4 @@
+sources:
+  2.2.2:
+    url: https://github.com/ros2-gbp/filters-release/archive/refs/tags/release/kilted/filters/2.2.2-1.tar.gz
+    sha256: cdb6f34360f81da4d6cac52e2cb143bce590289974aade02ab3bb054e73148f9

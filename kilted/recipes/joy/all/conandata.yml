@@ -1,0 +1,4 @@
+sources:
+  3.3.0:
+    url: https://github.com/ros2-gbp/joystick_drivers-release/archive/refs/tags/release/kilted/joy/3.3.0-3.tar.gz
+    sha256: 86be88799530572230ecbad7a10faf7433ef24de17c779ca5721db043bd92c2d

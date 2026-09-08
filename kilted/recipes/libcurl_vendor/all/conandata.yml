@@ -1,0 +1,4 @@
+sources:
+  3.7.1:
+    url: https://github.com/ros2-gbp/resource_retriever-release/archive/refs/tags/release/kilted/libcurl_vendor/3.7.1-1.tar.gz
+    sha256: 98a8bd4c0fde60470476bfe60473d60b13821365925f1d360779eeec3b3f1b6b

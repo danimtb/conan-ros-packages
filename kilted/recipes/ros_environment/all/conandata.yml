@@ -1,0 +1,4 @@
+sources:
+  4.3.1:
+    url: https://github.com/ros2-gbp/ros_environment-release/archive/refs/tags/release/kilted/ros_environment/4.3.1-1.tar.gz
+    sha256: ec8ab97c5f526df00e509199e615c70b7b06dcbdce677cbc4f24d3d1e9cfb62f

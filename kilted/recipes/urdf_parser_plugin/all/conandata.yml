@@ -1,0 +1,4 @@
+sources:
+  2.12.3:
+    url: https://github.com/ros2-gbp/urdf-release/archive/refs/tags/release/kilted/urdf_parser_plugin/2.12.3-1.tar.gz
+    sha256: f69314643b905a38e2db015e32ad6e4d3672f27ef93d80ed9e45adda6e23f9b2

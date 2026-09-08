@@ -1,0 +1,4 @@
+sources:
+  0.32.0:
+    url: https://github.com/ros2-gbp/rosbag2-release/archive/refs/tags/release/kilted/rosbag2_storage_sqlite3/0.32.0-2.tar.gz
+    sha256: 7640b358c62ecb6320a41466bcc16d7d52da27287acde55a81b4e2fe01ced0ab

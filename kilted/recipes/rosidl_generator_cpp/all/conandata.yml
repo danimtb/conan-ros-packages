@@ -1,0 +1,4 @@
+sources:
+  4.9.6:
+    url: https://github.com/ros2-gbp/rosidl-release/archive/refs/tags/release/kilted/rosidl_generator_cpp/4.9.6-1.tar.gz
+    sha256: c67209edc67e12a19c522875b99f9f125d67289cb46b6cf34d2f7b1082992f3c

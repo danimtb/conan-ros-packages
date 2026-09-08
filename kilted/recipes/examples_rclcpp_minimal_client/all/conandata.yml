@@ -1,0 +1,4 @@
+sources:
+  0.20.6:
+    url: https://github.com/ros2-gbp/examples-release/archive/refs/tags/release/kilted/examples_rclcpp_minimal_client/0.20.6-2.tar.gz
+    sha256: a6d0cfe699a72b005e0075cba65d6d0902afa83bed52c1da99c23f8735b00521

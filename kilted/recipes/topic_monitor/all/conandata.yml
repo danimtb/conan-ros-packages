@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/topic_monitor/0.36.5-1.tar.gz
+    sha256: c890f35eef20f9d666a6026ca0f8b2a4bf7b0a8de7252fd0bd9c31a6022b7d64

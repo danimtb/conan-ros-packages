@@ -1,0 +1,4 @@
+sources:
+  0.12.0:
+    url: https://github.com/ros2-gbp/variants-release/archive/refs/tags/release/kilted/ros_base/0.12.0-2.tar.gz
+    sha256: d694bf677267ea460e1a151828d3ffd6f6129241e81fee8019ea6f4cfb336bf8

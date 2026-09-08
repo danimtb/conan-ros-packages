@@ -1,0 +1,4 @@
+sources:
+  0.32.0:
+    url: https://github.com/ros2-gbp/rosbag2-release/archive/refs/tags/release/kilted/liblz4_vendor/0.32.0-2.tar.gz
+    sha256: b8192ec22edf93ffa77a7376c1c7e2bc629f67d5cfe7e78c1d68e37201ca5921

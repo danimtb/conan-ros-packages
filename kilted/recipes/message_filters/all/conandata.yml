@@ -1,0 +1,4 @@
+sources:
+  7.1.10:
+    url: https://github.com/ros2-gbp/ros2_message_filters-release/archive/refs/tags/release/kilted/message_filters/7.1.10-1.tar.gz
+    sha256: 47e53319001bb45505b5e303d12c3d76a158efbc788eeccf7215a4f26edd7088

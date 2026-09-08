@@ -1,0 +1,4 @@
+sources:
+  5.1.2:
+    url: https://github.com/ros2-gbp/image_transport_plugins-release/archive/refs/tags/release/kilted/theora_image_transport/5.1.2-1.tar.gz
+    sha256: 8a9faea1853f3fd2d650cae1c7395ce19d3becfdb9e55508be3a107c1b082d62

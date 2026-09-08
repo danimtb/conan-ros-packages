@@ -1,0 +1,4 @@
+sources:
+  3.2.4:
+    url: https://github.com/ros2-gbp/rcl_logging-release/archive/refs/tags/release/kilted/rcl_logging_spdlog/3.2.4-1.tar.gz
+    sha256: e04a18946f0088637de34a6abd253bb44c766fc736558123fa84abbacdabb66b

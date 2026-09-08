@@ -1,0 +1,4 @@
+sources:
+  2.3.2:
+    url: https://github.com/ros2-gbp/rcl_interfaces-release/archive/refs/tags/release/kilted/statistics_msgs/2.3.2-1.tar.gz
+    sha256: 4929456d8fbd08ea1193497d58634097327977222f65433ac9a786a0c5928719

@@ -1,0 +1,4 @@
+sources:
+  3.2.0:
+    url: https://github.com/ros2-gbp/pybind11_vendor-release/archive/refs/tags/release/kilted/pybind11_vendor/3.2.0-2.tar.gz
+    sha256: 9247535267537c102fe2de5a0944c308040da2c45b0cbaae37b61418eac7cdfb

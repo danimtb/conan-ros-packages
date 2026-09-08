@@ -1,0 +1,4 @@
+sources:
+  5.5.2:
+    url: https://github.com/ros2-gbp/common_interfaces-release/archive/refs/tags/release/kilted/std_msgs/5.5.2-1.tar.gz
+    sha256: 1d1e8efb7ed037a28c377f0a50042dacdd4adc4d147090a21da9e7633a468609

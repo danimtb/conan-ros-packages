@@ -1,0 +1,4 @@
+sources:
+  4.9.6:
+    url: https://github.com/ros2-gbp/rosidl-release/archive/refs/tags/release/kilted/rosidl_typesupport_interface/4.9.6-1.tar.gz
+    sha256: b7975eb45e32699f174bdc7bc68d80eb7ae3cbf0e50937548929b08f9d5eaf93

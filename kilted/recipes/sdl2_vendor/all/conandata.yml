@@ -1,0 +1,4 @@
+sources:
+  3.3.0:
+    url: https://github.com/ros2-gbp/joystick_drivers-release/archive/refs/tags/release/kilted/sdl2_vendor/3.3.0-3.tar.gz
+    sha256: 7daf6f14e9efbea5f9286d556a330087a4efb5d9c386ce3ee861865c7b9abff1

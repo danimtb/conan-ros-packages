@@ -1,0 +1,4 @@
+sources:
+  3.8.2:
+    url: https://github.com/ros2-gbp/rosidl_typesupport_fastrtps-release/archive/refs/tags/release/kilted/rosidl_typesupport_fastrtps_cpp/3.8.2-1.tar.gz
+    sha256: a9f842dd217660c4c3c474af8bfc7a29d034dc920e1be94e80e34fc93938d5d8

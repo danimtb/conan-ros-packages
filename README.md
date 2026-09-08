@@ -1,43 +1,29 @@
-# conan-ros-packages
+# ROS Conan recipes
 
-Tools under `scripts/` read a REP-143 `distribution.yaml` and produce Conan-oriented metadata for a **workspace** directory per ROS distro (e.g. `kilted/`): snapshot YAML, per-package `conandata.yml`, and `packages-build-order.json`.
+Generated [Conan](https://conan.io) recipes for ROS 2 distributions. Each
+distribution is a [local recipes index](https://docs.conan.io/2/devops/devops_local_recipes_index.html):
 
-## Commands
-
-From the **repository root**:
-
-```bash
-# Snapshot (fetches package.xml from GitHub for dependency closure)
-# Default: only supported-packages.yaml + transitive ROS deps present in the distribution
-python scripts/generate_snapshot.py --work-dir kilted
-
-# Every released package in the distribution (no supported-packages.yaml)
-python scripts/generate_snapshot.py --all-packages
-
-# Generate conandata + packages-build-order.json
-python scripts/generate_recipes.py
-
-# Same, then run conan create for each recipe in order
-python scripts/generate_recipes.py --build
+```
+kilted/
+  distro.yaml            # snapshot, roots, and non-ROS dependency map
+  extra/                 # hand-written recipes (orocos_kdl, …)
+  packages.lock.yaml
+  recipes/               # generated, plus a copy of extra/
 ```
 
-Use `--work-dir foxy` (or any other folder under the repo) for another ROS release; paths must be **relative to the repo root**.
+```bash
+conan remote add ros-kilted ./kilted --type=local-recipes-index
+conan install --requires=rclcpp/29.5.8@ros-kilted --build=missing -pr:a profiles/ros
+```
 
-`--work-dir` must be a path relative to the repository root (not absolute).
+`profiles/ros` overlays C++17 and CMake 3.29.3 on the detected default profile.
 
+Regenerate a distro with `python tools/gen_ros_recipes.py --distro kilted --lock`.
+`distro.yaml` lists the root ROS packages; their complete transitive dependency
+closure is generated into `recipes/` and built by CI.
+How to add packages: [docs/adding-packages.md](docs/adding-packages.md).
 
-## Workspace layout
-
-At the repository root, the workspace folder (e.g. `kilted/`) holds inputs and generated artifacts:
-
-**Inputs**
-
-- `distribution.yaml` — rosdistro distribution file in the workspace
-- `supported-packages.yaml` — seed package names (list under `supported-packages`; YAML comments allowed). `generate_snapshot.py` includes these plus transitive ROS dependencies (unless `--all-packages`). Same file drives `generate_recipes.py`.
-- `supported-packages-tests.yaml` *(optional)* — `test-packages` mapping from package name to a `test_package` spec; `generate_recipes.py` generates `test_package/` only when that name is also listed in `supported-packages.yaml`.
-
-**Generated**
-
-- `rosdistro_snapshot.yaml`
-- `packages-build-order.json`
-- `recipes/<package>/` — Conan recipes and generated `conandata.yml`
+Examples of consuming the index (each is `python run.py`):
+[examples/consumer_cmake](examples/consumer_cmake),
+[examples/consumer_colcon](examples/consumer_colcon),
+[examples/consumer_workspace](examples/consumer_workspace).

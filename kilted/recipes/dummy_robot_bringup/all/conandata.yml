@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/dummy_robot_bringup/0.36.5-1.tar.gz
+    sha256: 07d8f360ec6cfac6fb36de19f2bfb98371c94a4c6f2cdf00945e969cb1dd565c

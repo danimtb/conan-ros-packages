@@ -1,0 +1,4 @@
+sources:
+  1.9.4:
+    url: https://github.com/ros2-gbp/ros_tutorials-release/archive/refs/tags/release/kilted/turtlesim/1.9.4-1.tar.gz
+    sha256: 413c668e1e3874b636597cf68277895f1d172ee3f5a81b0a925c8e1e4dbd9010

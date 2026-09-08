@@ -1,0 +1,4 @@
+sources:
+  4.1.0:
+    url: https://github.com/ros2-gbp/vision_opencv-release/archive/refs/tags/release/kilted/image_geometry/4.1.0-2.tar.gz
+    sha256: 98e4ade926761002fcac6cd39d660a7eb79223d18979a52d1192c1e03b7d7beb

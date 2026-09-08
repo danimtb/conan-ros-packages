@@ -1,0 +1,4 @@
+sources:
+  1.8.0:
+    url: https://github.com/ros2-gbp/console_bridge_vendor-release/archive/refs/tags/release/kilted/console_bridge_vendor/1.8.0-2.tar.gz
+    sha256: b8efc563f206e18afb5b40fe6b843044c5aecf1d243e1062a8e4cb651dbb2ce4

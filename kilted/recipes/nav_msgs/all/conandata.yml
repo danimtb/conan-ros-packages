@@ -1,0 +1,4 @@
+sources:
+  5.5.2:
+    url: https://github.com/ros2-gbp/common_interfaces-release/archive/refs/tags/release/kilted/nav_msgs/5.5.2-1.tar.gz
+    sha256: 43b369373559b0a507f53ecc616d4ca110b6719f6a5e2fa2550535074b44dfc9

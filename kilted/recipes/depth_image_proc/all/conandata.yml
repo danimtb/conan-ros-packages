@@ -1,0 +1,4 @@
+sources:
+  6.0.12:
+    url: https://github.com/ros2-gbp/image_pipeline-release/archive/refs/tags/release/kilted/depth_image_proc/6.0.12-1.tar.gz
+    sha256: 97c75b157f116e7950eac60351930fed4970357229535380aedead6ca3ddc58a

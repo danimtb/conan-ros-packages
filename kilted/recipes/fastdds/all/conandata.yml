@@ -1,0 +1,4 @@
+sources:
+  3.2.4:
+    url: https://github.com/ros2-gbp/fastdds-release/archive/refs/tags/release/kilted/fastdds/3.2.4-1.tar.gz
+    sha256: 5317cce72a1b2d36d53da0970ca69bc01c7c91182b07203781d782423e78b06a

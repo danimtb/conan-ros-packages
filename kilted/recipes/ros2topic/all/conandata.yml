@@ -1,0 +1,4 @@
+sources:
+  0.38.3:
+    url: https://github.com/ros2-gbp/ros2cli-release/archive/refs/tags/release/kilted/ros2topic/0.38.3-2.tar.gz
+    sha256: 91ad87cbf1287b870cb8238f8bd0690fbde61f855746e22ae0405e911c5d55cb

@@ -1,0 +1,4 @@
+sources:
+  2.3.2:
+    url: https://github.com/ros2-gbp/rcl_interfaces-release/archive/refs/tags/release/kilted/type_description_interfaces/2.3.2-1.tar.gz
+    sha256: dee3807d8f69fe4b3e29486b35c303b077d83bb8fff2533c623b9346ddf480c2

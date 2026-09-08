@@ -1,0 +1,4 @@
+sources:
+  9.3.4:
+    url: https://github.com/ros2-gbp/rmw_fastrtps-release/archive/refs/tags/release/kilted/rmw_fastrtps_cpp/9.3.4-1.tar.gz
+    sha256: c6fedf743e77e5f6f8cfac595058b551f99b1ccb4ffa9fe31ba2c425b2e87cc8

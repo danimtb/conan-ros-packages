@@ -1,0 +1,4 @@
+sources:
+  0.32.0:
+    url: https://github.com/ros2-gbp/rosbag2-release/archive/refs/tags/release/kilted/sqlite3_vendor/0.32.0-2.tar.gz
+    sha256: 6960d5dcf4b142705333024f07dc7b454760d88528a832cccb03df7bb6e7ec83

@@ -1,0 +1,4 @@
+sources:
+  0.14.7:
+    url: https://github.com/ros2-gbp/ament_cmake_ros-release/archive/refs/tags/release/kilted/ament_cmake_ros_core/0.14.7-1.tar.gz
+    sha256: 5e06b020e3fa95fa6b297d76ecc043c4232ea4c8ec77bc4e5b79acc997133b5b

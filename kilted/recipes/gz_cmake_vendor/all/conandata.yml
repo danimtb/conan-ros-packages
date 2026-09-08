@@ -1,0 +1,4 @@
+sources:
+  0.3.3:
+    url: https://github.com/ros2-gbp/gz_cmake_vendor-release/archive/refs/tags/release/kilted/gz_cmake_vendor/0.3.3-1.tar.gz
+    sha256: cb0058a59efeb53303657afbb52e387a902ce37c67421fb140cf19ed566777ba

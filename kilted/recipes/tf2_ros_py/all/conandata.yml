@@ -1,0 +1,4 @@
+sources:
+  0.41.7:
+    url: https://github.com/ros2-gbp/geometry2-release/archive/refs/tags/release/kilted/tf2_ros_py/0.41.7-1.tar.gz
+    sha256: d00b4a72aab64d4f5131da6919b8fa4b43cdceb6053b8b9b13ba0d37367d63c5

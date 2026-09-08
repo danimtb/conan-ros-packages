@@ -1,0 +1,4 @@
+sources:
+  2.5.0:
+    url: https://github.com/ros2-gbp/navigation_msgs-release/archive/refs/tags/release/kilted/map_msgs/2.5.0-2.tar.gz
+    sha256: bb388d836d96979569d78922eae14b55515a8ecce7f3d031bcf9260e05b2e85d

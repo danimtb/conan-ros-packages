@@ -1,0 +1,4 @@
+sources:
+  0.20.6:
+    url: https://github.com/ros2-gbp/examples-release/archive/refs/tags/release/kilted/examples_rclpy_executors/0.20.6-2.tar.gz
+    sha256: e134afca653593f31ab4ca44dffdf16f5e8305c6344904bf314721c809b5622e

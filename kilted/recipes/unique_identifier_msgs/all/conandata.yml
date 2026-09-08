@@ -1,0 +1,4 @@
+sources:
+  2.7.0:
+    url: https://github.com/ros2-gbp/unique_identifier_msgs-release/archive/refs/tags/release/kilted/unique_identifier_msgs/2.7.0-2.tar.gz
+    sha256: 4becc843fe3d31ce966530d45eda528ca474c5984ef641ed24f6357e533013ac

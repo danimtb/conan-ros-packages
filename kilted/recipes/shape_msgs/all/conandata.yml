@@ -1,0 +1,4 @@
+sources:
+  5.5.2:
+    url: https://github.com/ros2-gbp/common_interfaces-release/archive/refs/tags/release/kilted/shape_msgs/5.5.2-1.tar.gz
+    sha256: 11ba9a0e9f1718edfb2be0c1615fee49152d2f06183bb10edb72e5c98ee42ef3

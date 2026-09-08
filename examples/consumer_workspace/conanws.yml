@@ -1,0 +1,5 @@
+packages:
+  - path: dummy_lib
+    ref: dummy_lib/0.1
+  - path: consumer_node
+    ref: consumer_node/0.1

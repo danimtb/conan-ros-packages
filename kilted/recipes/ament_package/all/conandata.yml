@@ -1,0 +1,4 @@
+sources:
+  0.17.3:
+    url: https://github.com/ros2-gbp/ament_package-release/archive/refs/tags/release/kilted/ament_package/0.17.3-1.tar.gz
+    sha256: 473b506d618fdd411b2ad1a5a63d4724e99ccc304799e7252432a72db1b560e7

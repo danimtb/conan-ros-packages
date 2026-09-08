@@ -1,0 +1,4 @@
+sources:
+  0.3.1:
+    url: https://github.com/ros2-gbp/rosidl_dynamic_typesupport-release/archive/refs/tags/release/kilted/rosidl_dynamic_typesupport/0.3.1-2.tar.gz
+    sha256: 5e2b031eba9f8245dc8d983be7da6cfda46c478cd23cfb47e4a1b053615aee70

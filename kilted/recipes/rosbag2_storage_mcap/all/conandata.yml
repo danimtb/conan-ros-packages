@@ -1,0 +1,4 @@
+sources:
+  0.32.0:
+    url: https://github.com/ros2-gbp/rosbag2-release/archive/refs/tags/release/kilted/rosbag2_storage_mcap/0.32.0-2.tar.gz
+    sha256: e35a8a58b09739a4acfef2dec496adbdc53348b429b742cfe1b1cb77a8603bda

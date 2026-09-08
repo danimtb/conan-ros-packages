@@ -1,0 +1,424 @@
+# Pinned snapshot for ROS 2 Kilted.
+rosdistro_tag: kilted/2026-06-17
+cache_url: https://repo.ros2.org/rosdistro_cache/kilted-cache.yaml.gz
+
+# Default user for generated Conan packages. Each recipe takes its version from rosdistro.
+conan_user: ros-kilted
+
+# Root ROS packages to generate, plus their complete package.xml dependency closure.
+packages:
+  - desktop
+  - perception
+
+# Every package.xml <depend> that is not another ROS package in the generated set
+# has to be resolved here. An unmapped key is a hard error: silently dropping a
+# dependency produces a recipe that builds on the machine that has it installed
+# and nowhere else.
+#
+# Sections:
+#   requires:      host requirement, a ConanCenter or extra/ reference
+#   tool_requires: build context requirement, build tools only
+#   pip:           installed into a PyEnv virtualenv during generate()
+#   ignore:        deliberately dropped, with the reason in the comment
+#
+# Versions are pinned to a snapshot known to build this distro. The `-dev`
+# spellings are the Debian split of the same upstream library.
+requires:
+  openssl: openssl/[>=3.3 <4]
+  libssl-dev: openssl/[>=3.3 <4]
+  asio: asio/1.28.1
+  tinyxml2: tinyxml2/10.0.0
+  nlohmann-json-dev: nlohmann_json/3.11.3
+  spdlog: spdlog/1.12.0
+  yaml: libyaml/0.2.5
+  libyaml: libyaml/0.2.5
+  libyaml-dev: libyaml/0.2.5
+  gtest: gtest/1.15.0
+  google-mock: gtest/1.15.0
+  pybind11-dev: pybind11/2.11.1
+  libconsole-bridge-dev: console_bridge/1.0.2
+  liblz4: lz4/1.9.4
+  liblz4-dev: lz4/1.9.4
+  libzstd-dev: zstd/1.5.5
+  libsqlite3-dev: sqlite3/3.45.2
+  yaml-cpp: yaml-cpp/0.8.0
+  eigen: eigen/3.4.0
+  bullet: bullet3/3.25
+  liborocos-kdl-dev: orocos_kdl/1.5.1
+  python3-pykdl: python_orocos_kdl/1.5.1
+  # desktop only. The Debian keys split one upstream library across several names; qt and
+  # sdl additionally need shared=True, which the dep_options table below adds to whichever
+  # recipe requires them.
+  qtbase5-dev: qt/5.15.19
+  qt5-qmake: qt/5.15.19
+  libqt5-core: qt/5.15.19
+  libqt5-gui: qt/5.15.19
+  libqt5-opengl: qt/5.15.19
+  libqt5-svg: qt/5.15.19
+  libqt5-svg-dev: qt/5.15.19
+  libqt5-widgets: qt/5.15.19
+  libopencv-dev: opencv/4.12.0
+  libopencv-core: opencv/4.12.0
+  libopencv-highgui: opencv/4.12.0
+  libopencv-imgcodecs: opencv/4.12.0
+  libopencv-imgproc: opencv/4.12.0
+  libopencv-imgproc-dev: opencv/4.12.0
+  libopencv-videoio: opencv/4.12.0
+  libpcl-all-dev: pcl/1.14.1
+  libpcl-common: pcl/1.14.1
+  libpcl-io: pcl/1.14.1
+  libpcl-features: pcl/1.14.1
+  libpcl-filters: pcl/1.14.1
+  libpcl-segmentation: pcl/1.14.1
+  libpcl-surface: pcl/1.14.1
+  assimp: assimp/5.3.1
+  libfreetype-dev: freetype/2.13.2
+  libfreetype6: freetype/2.13.2
+  libglew-dev: glew/2.2.0
+  curl: libcurl/8.5.0
+  sdl2: sdl/2.32.10
+  opengl: opengl/system
+  libboost-dev: boost/1.83.0
+  # perception only. The boost version is pcl's: pcl/1.14.1 requires boost/1.83.0 outright,
+  # so anything else here is a version conflict the map cannot resolve on its own.
+  libboost-python-dev: boost/1.83.0
+  libboost-python: boost/1.83.0
+  # perception only. A range and not a pin, unlike everything else here: zlib is a
+  # transitive dependency of half of ConanCenter, all of it through ranges, and a pin
+  # loses to whatever those resolve to as a version conflict.
+  zlib: zlib/[>=1.2.11 <2]
+  libogg: ogg/1.3.5
+  libtheora: theora/1.1.1
+
+tool_requires:
+  cmake: cmake/3.29.3
+  pkg-config: pkgconf/2.2.0
+
+# The interpreter itself is not a Conan package here: the templates run either the PyEnv
+# virtualenv or whatever `-c user.ros2:python=<path>` points at.
+ignore:
+  python3: provided by the recipe templates, not by the graph
+  python3-dev: the headers ship with the interpreter the templates already pin
+  libatomic: part of the gcc runtime on Linux, does not exist under MSVC
+  acl: POSIX ACLs, Linux only, and guarded by the platform checks that use them
+  # ament_vendor() shells out to git and vcs to fetch sources. Most vendor packages here
+  # are given their library through CMakeDeps and never take that path; the handful whose
+  # library is not on ConanCenter do clone, and use the git already on PATH.
+  git: most vendor packages resolve their library from the graph, not from a clone
+  # No ConanCenter recipe for any of the three, so the vendor packages clone and build
+  # them, the same way rviz_ogre_vendor builds OGRE. recipes/ros-kilted patches all three.
+  gz-cmake4: built from source by gz_cmake_vendor
+  gz-math8: built from source by gz_math_vendor
+  gz-utils3: built from source by gz_utils_vendor
+  # tracetools compiles its macros to no-ops when LTTng is absent, which is what the
+  # upstream CMakeLists already does on Windows, macOS, Android and BSD.
+  liblttng-ust-dev: LTTng tracing, Linux only
+  lttng-tools: LTTng tracing, Linux only
+  # Only `ros2 run tf2_tools view_frames` shells out to dot; everything else in the
+  # package works without it, and ConanCenter has no graphviz.
+  graphviz: runtime tool for one tf2_tools verb
+  # The X11 keys are the Linux spelling of what opengl/system and qt already pull in there,
+  # and there is nothing to install on Windows or macOS.
+  libx11-dev: X11, Linux only, covered by qt and opengl/system
+  libxaw: X11, Linux only, covered by qt and opengl/system
+  libxrandr: X11, Linux only, covered by qt and opengl/system
+  # libcurl_vendor probes for the file(1)/libmagic pair before its ExternalProject, which
+  # never runs because the map hands it libcurl.
+  file: only used by the libcurl_vendor fallback build
+  # cv_bridge declares this next to libopencv-dev, which is the one its C++ library and
+  # its boost-python extension actually link. Only the pure-python half imports cv2, and
+  # the PyPI spelling, opencv-python, ships its own OpenCV build: taking it would load a
+  # second, independently compiled OpenCV into the same process. Anyone who wants the
+  # python half installs it themselves, against the OpenCV the graph already has.
+  python3-opencv: the C++ side links libopencv-dev, and opencv-python vendors a second copy
+
+# Python rosdep keys that have to reach consumers become real Conan packages, generated
+# from PyPI, that publish their site-packages on PYTHONPATH. A virtualenv cannot do this:
+# every ament_cmake package imports catkin_pkg at configure time, including the ones a
+# user builds later, so it has to travel through the graph.
+# An entry is either `key: name/version` (pure python) or a mapping with `pure: false`,
+# which keeps `arch` in the package_id because the wheel ships compiled extensions.
+pip_packages:
+  python3-catkin-pkg-modules: catkin_pkg/1.1.0
+  # Not only the ament_python packages: every ament_cmake package that installs a python
+  # module runs setup.py during its own build, so a per-recipe virtualenv would mean one
+  # virtualenv per package. On PYTHONPATH it is a single shared binary.
+  python3-setuptools: setuptools/75.8.0
+  # empy renders the rosidl templates and lark parses the .idl files, in every package
+  # that declares messages, so both have to reach consumers. ROS 2 is pinned to empy 3:
+  # 4.x changed the API and rosidl_adapter has not followed.
+  python3-empy: empy/3.3.4
+  python3-lark-parser: lark/1.2.2
+  python3-argcomplete: argcomplete/3.6.2
+  python3-pytest: pytest/8.3.4
+  python3-vcstool: vcstool/0.3.0
+  # Conan references are lowercase; PyPI resolves the normalised name just the same.
+  python3-yaml: pyyaml/6.0.2
+  python3-typing-extensions: typing_extensions/4.12.2
+  python3-packaging: packaging/24.2
+  python3-importlib-metadata: importlib_metadata/8.5.0
+  python3-rosdistro-modules: rosdistro/1.0.1
+  # Both ship compiled extensions: cryptography links a Rust core, lxml links libxml2.
+  python3-cryptography:
+    ref: cryptography/44.0.0
+    pure: false
+  python3-lxml:
+    ref: lxml/5.3.0
+    pure: false
+  # psutil ships a compiled extension; ros2cli uses it for the daemon.
+  python3-psutil:
+    ref: psutil/6.1.1
+    pure: false
+  # rosidl_generator_py needs the numpy headers to build the C extension of every
+  # interface package, so a build-only virtualenv is not enough.
+  python3-numpy:
+    ref: numpy/2.3.2
+    pure: false
+  # desktop only. image_geometry uses it for its deprecation decorators. Not pure: the
+  # package itself is, but it pulls wrapt, whose wheel ships _wrappers.cp*-win_amd64.pyd.
+  python3-deprecated:
+    ref: deprecated/1.2.15
+    pure: false
+
+# ROS packages deliberately left out of the generated set. The closure walk stops here and
+# any dependency on them is dropped, so like `ignore` above, each one needs a reason.
+skip_packages:
+  # ros_core exec_depends on the two lint aggregators, which is the whole lint tree:
+  # cppcheck, uncrustify (built from source by uncrustify_vendor), pydocstyle, xmllint
+  # and nine flake8 plugins. Cutting the two roots is enough.
+  ament_lint_auto: lint aggregator, and the templates build with BUILD_TESTING=False
+  ament_lint_common: lint aggregator, and the templates build with BUILD_TESTING=False
+  ament_cmake_cppcheck: lint macros, and the templates build with BUILD_TESTING=False
+  ament_cmake_cpplint: lint macros, and the templates build with BUILD_TESTING=False
+  ament_cmake_flake8: lint macros, and the templates build with BUILD_TESTING=False
+  ament_cmake_pep257: lint macros, and the templates build with BUILD_TESTING=False
+  ament_cmake_uncrustify: lint macros, and the templates build with BUILD_TESTING=False
+  # rosidl_core_generators exports every language generator as a buildtool. The Rust one
+  # needs a cargo toolchain that nothing else in the graph provides; without it in
+  # AMENT_PREFIX_PATH the extension point simply does not fire and no .rs is emitted.
+  rosidl_generator_rs: needs a Rust toolchain, and the extension point is opt-in
+  # rmw_implementation build_depends on every RMW at once so colcon builds them all; at
+  # runtime only one is selected through RMW_IMPLEMENTATION. Fast DDS is the ROS 2 default
+  # and the only one kept here. rmw_implementation enumerates what the ament index offers,
+  # so dropping the others needs no patch.
+  rmw_connextdds: RTI Connext is proprietary and not redistributable
+  rmw_connextdds_common: RTI Connext is proprietary and not redistributable
+  rti_connext_dds_cmake_module: RTI Connext is proprietary and not redistributable
+  rmw_cyclonedds_cpp: second RMW, Fast DDS is the one kept
+  cyclonedds: only reachable through rmw_cyclonedds_cpp
+  iceoryx_hoofs: only reachable through cyclonedds
+  iceoryx_posh: only reachable through cyclonedds
+  iceoryx_binding_c: only reachable through cyclonedds
+  # recipes/ros-kilted passes --packages-ignore for these three as well.
+  rmw_zenoh_cpp: needs a cargo toolchain, same exclusion as the monolith
+  zenoh_cpp_vendor: needs a cargo toolchain, same exclusion as the monolith
+  zenoh_c_vendor: needs a cargo toolchain, same exclusion as the monolith
+  rmw_test_fixture_implementation: test fixture, and the templates build with BUILD_TESTING=False
+  # The whole graph shares one interpreter, so a python rosdep with no wheel for it has to
+  # be built from source. lxml only ships cp314 wheels in 7.0 pre-releases, and building it
+  # needs libxml2 headers. Pinning the graph to an interpreter that lxml supports would
+  # bring sros2 back; nothing else in ros_base needs it.
+  sros2: needs lxml, which has no wheel for CPython 3.14
+  sros2_cmake: only reachable through sros2
+  # The whole rqt tree hangs off this one exec_depend of desktop, so cutting the root is
+  # enough. It goes for the same reason as sros2: every rqt plugin reaches Qt through
+  # python_qt_binding, which needs PyQt5, and PyQt5 ships no cp314 wheel. Below it are also
+  # pygraphviz, whose graphviz C library is already ignored, and pycairo.
+  rqt_common_plugins: needs PyQt5, which has no wheel for CPython 3.14
+  # A pure-python calibration GUI whose every operation is a cv2 call. cv_bridge can live
+  # without the python3-opencv that is ignored above because its C++ half is the useful
+  # one; this package would install and then fail on its first import.
+  camera_calibration: is nothing but cv2, which is not in the graph
+  # An icon theme fetched as a tarball by ament_vendor(); nothing links against it.
+  tango_icons_vendor: downloads an icon theme, no library to hand it
+
+# Requirements a package needs but does not declare, because upstream fetches and builds
+# the library itself with ament_vendor(). Supplying it through CMakeDeps makes the vendor
+# package's own find_package() succeed, so the ExternalProject never runs.
+extra_requires:
+  foonathan_memory_vendor: [foonathan-memory/0.7.3]
+  pybind11_vendor: [pybind11/2.11.1]
+  mcap_vendor: [mcap/1.4.1]
+
+# Per-package CMake cache variables. This is where the granular model pays what the monolith
+# pays in patches, and it is cheaper: a variable is a line of configuration, a patch is a
+# string match against a source file that has to keep matching after every release.
+# Values are `includedir:<pkg>`, `target:<pkg>` or `literal:<text>`.
+cmake_variables:
+  # The GitHub release tarball carries no git submodules, so the copies under thirdparty/
+  # that Fast DDS falls back to are missing. It finds both with find_package(... CONFIG),
+  # which Conan satisfies, and then consumes them through the variables only its own
+  # find-module fallback would have set.
+  fastdds:
+    Asio_INCLUDE_DIR: includedir:asio
+    TINYXML2_INCLUDE_DIR: includedir:tinyxml2
+    TINYXML2_LIBRARY: target:tinyxml2
+  # These four build their nodes into a shared library and link an executable against it,
+  # and not one of their public headers carries a visibility macro: nothing is exported
+  # and the executable fails to link under MSVC. Upstream never hits it because on Linux
+  # the symbols are visible by default, and the rest of image_pipeline does have the
+  # macros, so the gap is per-package rather than repo-wide. Exporting everything is what
+  # CMake offers for exactly this, and it beats patching headers upstream keeps editing.
+  # The variable is ignored on every other platform.
+  image_publisher:
+    CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS: literal:ON
+  image_view:
+    CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS: literal:ON
+  image_proc:
+    CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS: literal:ON
+  stereo_image_proc:
+    CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS: literal:ON
+  # Same gap, a different repository: with nothing exported MSVC writes no import library
+  # at all, so the link of the filter chain executables fails on the missing .lib rather
+  # than on the symbols.
+  laser_filters:
+    CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS: literal:ON
+
+# CMake target renames for dependencies. Same root cause as the block above, seen from the
+# other side: a vendor package ships a Find<X>.cmake declaring one target name, and once the
+# library comes from ConanCenter instead, the CMakeDeps files are found first and declare
+# another. Renaming beats patching the consumer.
+# Applied to every CMake recipe that can reach the dependency, not just the one linking it:
+# mcap_vendor bakes "LZ4::lz4;zstd::zstd" into its exported config, so every consumer of
+# mcap_vendor has to be able to resolve those names too. Reaching further than the direct
+# requirement is necessary; reaching every recipe is not, and would tie all of them to a
+# revision bump whenever this table changes.
+cmake_target_names:
+  lz4: LZ4::lz4
+  zstd: zstd::zstd
+
+# Options a dependency needs from whoever requires it. They belong here and not in a
+# profile: they are requirements of the ROS packages that consume the library, not of the
+# person building. Every generated recipe that requires the dependency declares them, so a
+# clash with another consumer surfaces as a resolution error instead of being papered over
+# from outside.
+dep_options:
+  # Loaded as plugins into the same process as rviz and qt_gui_cpp. A static build would
+  # give each of them its own copy of Qt's global state.
+  qt: {shared: true}
+  # Pulled in through rviz_ogre_vendor's OGRE, which dlopens its render systems.
+  sdl: {shared: true}
+  # cv_bridge builds its python bindings with Boost.Python, which ConanCenter leaves out
+  # by default. Boost.Python is ABI-locked to one CPython minor, and the boost recipe
+  # keeps python_version in its package_id and defaults the interpreter to the one running
+  # Conan, which is the same one the templates give the rest of the graph.
+  boost: {without_python: false}
+  # image_proc's marker tracker includes opencv2/aruco.hpp. The ConanCenter recipe builds
+  # every main module by default and no contrib one, and aruco is contrib; the rest of
+  # what this closure includes (calib3d, highgui, imgcodecs, imgproc, videoio) is already
+  # on. Debian's libopencv-dev ships contrib, which is why upstream never declares it.
+  opencv: {aruco: true}
+
+# Dependencies that build a python extension module and pick the interpreter through their
+# own option, with their own default. Any package requiring one passes this graph's
+# interpreter down; recipes/ros-kilted pins the same option by hand. Without it
+# python_orocos_kdl ships PyKDL.cp312-*.pyd, which no other CPython can import, so
+# python_orocos_kdl_vendor finds no PyKDL and falls back to compiling the bindings itself.
+propagate_python_version:
+  - python_orocos_kdl
+
+# Edits applied to the release tarball in source(). Upstream sources that only ever build
+# under colcon can assume things Conan does not provide, and there is no other place to
+# say so: the recipes are generated, not hand written.
+patches:
+  # ament_vendor() hands each bundled source to a nested CMake run, forwarding an
+  # allowlist of variables through a -C cache file. CMAKE_POLICY_DEFAULT_CMP0091 is not on
+  # that list, so the nested run starts with the policy unset while inheriting Conan's
+  # toolchain, which refuses to select an MSVC runtime without it. Conan passes the flag
+  # on the command line for the packages it drives itself; the nested ones never see it.
+  # Patching the macro fixes every vendor package at once instead of one per consumer.
+  # The bundled freetype has every optional dependency turned off except brotli, because
+  # upstream only had to worry about what apt puts on the system and brotli is not usually
+  # there. It is in this graph, pulled in by the ConanCenter freetype, and ament_vendor
+  # does forward CMAKE_PREFIX_PATH, so the nested build finds brotlidec and links it alone,
+  # without brotlicommon, leaving eight unresolved symbols.
+  rviz_ogre_vendor:
+    - file: CMakeLists.txt
+      search: -DFT_DISABLE_HARFBUZZ:BOOL=ON
+      replace: |-
+        -DFT_DISABLE_HARFBUZZ:BOOL=ON
+              -DFT_DISABLE_BROTLI:BOOL=ON
+    # OGRE 1.12.10 still uses std::binary_function, which C++17 removed. Upstream never
+    # hits it because colcon leaves the standard to OGRE; here the profile asks for
+    # cppstd=17 and Conan's toolchain reaches the nested build, which cannot override it
+    # from the command line. MSVC keeps the removed helpers behind this macro.
+    - file: CMakeLists.txt
+      search: set(OGRE_CMAKE_ARGS)
+      replace: |-
+        set(OGRE_CMAKE_ARGS)
+        if(MSVC)
+          set(OGRE_CXX_FLAGS "/D_HAS_AUTO_PTR_ETC=1 ${OGRE_CXX_FLAGS}")
+        endif()
+  # The graph provides Eigen3 through CMakeDeps, whose config sets Eigen3_FOUND. Upstream
+  # tests the uppercase EIGEN3_FOUND, which only the FindEigen3.cmake that eigen3_cmake
+  # module ships would set, and its module path does not survive the scope it is inserted
+  # in. So the fallback fires and asks for `Eigen`, a package name nothing here provides:
+  # the comment upstream attaches to it dates it to a chocolatey build of Eigen 3.3.4.
+  depth_image_proc:
+    - file: CMakeLists.txt
+      search: |-
+        find_package(Eigen3 QUIET)
+        if(NOT EIGEN3_FOUND)
+          find_package(Eigen REQUIRED)
+          set(EIGEN3_INCLUDE_DIRS ${EIGEN_INCLUDE_DIRS})
+          include_directories(include ${EIGEN3_INCLUDE_DIRS})
+        endif()
+      replace: |-
+        find_package(Eigen3 REQUIRED CONFIG)
+        include_directories(include ${Eigen3_INCLUDE_DIRS})
+
+  # `uint` is a POSIX typedef from <sys/types.h>, not a C++ one, and the UCRT does not
+  # have it. Several packages in this closure use it and build anyway because Qt and
+  # OpenCV both typedef it for their own consumers; this header includes neither.
+  laser_filters:
+    - file: include/laser_filters/binning_filter.h
+      search: "  uint num_bins_;"
+      replace: "  unsigned int num_bins_;"
+
+  # image_rotate_node.cpp uses M_PI, which is not standard C++: the UCRT only declares it
+  # when _USE_MATH_DEFINES is defined before <cmath>, and glibc always does. Of the three
+  # packages in this closure that use it without asking for it, this is the one that
+  # actually reaches a compiler with the constant missing.
+  image_rotate:
+    - file: CMakeLists.txt
+      search: project(image_rotate)
+      replace: |-
+        project(image_rotate)
+        add_compile_definitions(_USE_MATH_DEFINES)
+
+  # Upstream asks pkg-config for ogg and theora and then uses only the _LIBRARIES it
+  # returns, never the _INCLUDE_DIRS or _LIBRARY_DIRS: on Debian both libraries are in the
+  # compiler's default paths, so the omission never shows. Here they come from the graph
+  # and nothing finds theora/codec.h. The directory-level commands go right after the last
+  # probe so they cover both targets, and on Linux they add paths that were already there.
+  theora_image_transport:
+    - file: CMakeLists.txt
+      search: pkg_check_modules(PC_THEORADEC REQUIRED theoradec)
+      replace: |-
+        pkg_check_modules(PC_THEORADEC REQUIRED theoradec)
+        include_directories(${PC_OGG_INCLUDE_DIRS} ${PC_THEORA_INCLUDE_DIRS}
+          ${PC_THEORAENC_INCLUDE_DIRS} ${PC_THEORADEC_INCLUDE_DIRS})
+        link_directories(${PC_OGG_LIBRARY_DIRS} ${PC_THEORA_LIBRARY_DIRS}
+          ${PC_THEORAENC_LIBRARY_DIRS} ${PC_THEORADEC_LIBRARY_DIRS})
+
+  ament_cmake_vendor_package:
+    - file: cmake/ament_vendor.cmake
+      search: |-
+        list(PREPEND CMAKE_ARGS
+            -DCMAKE_STAGING_PREFIX=<INSTALL_DIR>
+      replace: |-
+        list(PREPEND CMAKE_ARGS
+            -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+            -DCMAKE_STAGING_PREFIX=<INSTALL_DIR>
+
+# Dependencies that every package of a given build_type needs at build time but that
+# almost no package.xml declares, because apt/colcon have them installed system-wide.
+# This is the equivalent of RoboStack's pkg_additional_info.yaml and it is unavoidable:
+# ament_package() calls package_xml_2_cmake.py, which imports catkin_pkg, in every
+# single ament_cmake package, yet only ament_cmake_core declares the rosdep key.
+# References without a user get the ros-<distro> one appended.
+implicit:
+  ament_cmake:
+    requires: [catkin_pkg/1.1.0, setuptools/75.8.0]
+  ament_python:
+    requires: [setuptools/75.8.0]

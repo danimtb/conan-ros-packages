@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/quality_of_service_demo_cpp/0.36.5-1.tar.gz
+    sha256: 590cf715337c78deb21a164a606ecb3e0fb3e3ca9eee000bd38d12fa273e42f8

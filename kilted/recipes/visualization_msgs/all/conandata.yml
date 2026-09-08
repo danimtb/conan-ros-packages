@@ -1,0 +1,4 @@
+sources:
+  5.5.2:
+    url: https://github.com/ros2-gbp/common_interfaces-release/archive/refs/tags/release/kilted/visualization_msgs/5.5.2-1.tar.gz
+    sha256: ea47074de9999f65d4b9b709e46197c5587ad4aecfd1fd5c0a8f30804e5bfa36

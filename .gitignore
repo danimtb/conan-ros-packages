@@ -1,8 +1,54 @@
-.conan2
+.conan2/
+.conanrc
+
+# --- Conan recipe development ---
+**/conan_pyenv/
+CMakeUserPresets.json
+ConanPresets.json
+
+# --- Examples ---
+examples/**/build/
+examples/**/install/
+examples/**/log/
+examples/**/.conan/
+examples/**/.ros-conan/
+
+# --- Python ---
 __pycache__/
 *.py[cod]
-**/recipes/*/test_package/build/
-**/recipes/*/test_package/conan_pyenv/
-**/CMakeUserPresets.json
-*.bat
-*.sh
+*$py.class
+*.egg-info/
+.eggs/
+/dist/
+/build/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.python-version
+
+# --- Editors / IDEs ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- Visual Studio / MSVC ---
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+x64/
+x86/
+[Dd]ebug/
+[Rr]elease/
+*.VC.db
+*.VC.VC.opendb
+
+# --- Windows ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.venv/

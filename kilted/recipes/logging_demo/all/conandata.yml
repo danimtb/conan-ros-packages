@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/logging_demo/0.36.5-1.tar.gz
+    sha256: 492be29a0cf298e32f2a98359f8fc4644efc22339af19b21a5c18289ced98869

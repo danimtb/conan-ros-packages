@@ -1,0 +1,4 @@
+sources:
+  5.5.2:
+    url: https://github.com/ros2-gbp/common_interfaces-release/archive/refs/tags/release/kilted/sensor_msgs_py/5.5.2-1.tar.gz
+    sha256: 1f8c50529d08ccc2bb0a76ea9996c38ddb5e49260fb2ef377be854c3b15e5e4d

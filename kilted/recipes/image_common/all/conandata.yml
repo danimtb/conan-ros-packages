@@ -1,0 +1,4 @@
+sources:
+  6.1.4:
+    url: https://github.com/ros2-gbp/image_common-release/archive/refs/tags/release/kilted/image_common/6.1.4-1.tar.gz
+    sha256: 0755e5166259e5f9f239468e1a6d1ee8358aef400c270286bbf0c8028c7a38dc

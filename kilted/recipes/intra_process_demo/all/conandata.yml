@@ -1,0 +1,4 @@
+sources:
+  0.36.5:
+    url: https://github.com/ros2-gbp/demos-release/archive/refs/tags/release/kilted/intra_process_demo/0.36.5-1.tar.gz
+    sha256: fc59b0e9289cae70cf523afd047d6cf618fac19be7251bab050ac6778fa1782c

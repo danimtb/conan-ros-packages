@@ -1,0 +1,4 @@
+sources:
+  5.1.2:
+    url: https://github.com/ros2-gbp/image_transport_plugins-release/archive/refs/tags/release/kilted/compressed_depth_image_transport/5.1.2-1.tar.gz
+    sha256: d82dc5c4305ce56c255b432c8b059e1d022e2d9da4af94994edbe3707a683398

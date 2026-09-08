@@ -1,0 +1,4 @@
+sources:
+  2.3.2:
+    url: https://github.com/ros2-gbp/rcl_interfaces-release/archive/refs/tags/release/kilted/service_msgs/2.3.2-1.tar.gz
+    sha256: 68ec592b383af30d4cfba8c37c7daf1ec9248ffad250f4849575f84782f1f719

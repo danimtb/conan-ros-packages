@@ -1,0 +1,4 @@
+sources:
+  1.9.4:
+    url: https://github.com/ros2-gbp/ros_tutorials-release/archive/refs/tags/release/kilted/turtlesim_msgs/1.9.4-1.tar.gz
+    sha256: f1b247dfc2ff53a0b5bf92dac685d1220cfc105de0e09308b654390fedb8eb1c

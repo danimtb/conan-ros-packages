@@ -1,0 +1,4 @@
+sources:
+  5.5.2:
+    url: https://github.com/ros2-gbp/common_interfaces-release/archive/refs/tags/release/kilted/common_interfaces/5.5.2-1.tar.gz
+    sha256: 786e61df295918e3e2e4d2e5a1f19ca16c5fd502610fcb2f9e1f56e474fcc538

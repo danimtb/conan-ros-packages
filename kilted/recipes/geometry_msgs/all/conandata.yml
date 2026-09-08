@@ -1,0 +1,4 @@
+sources:
+  5.5.2:
+    url: https://github.com/ros2-gbp/common_interfaces-release/archive/refs/tags/release/kilted/geometry_msgs/5.5.2-1.tar.gz
+    sha256: 3b3c802503a02ebba7a07cb6d8537d09b2c01cb2bde61708d50b6b8bb400eadf

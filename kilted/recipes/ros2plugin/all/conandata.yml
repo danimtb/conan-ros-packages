@@ -1,0 +1,4 @@
+sources:
+  5.6.3:
+    url: https://github.com/ros2-gbp/pluginlib-release/archive/refs/tags/release/kilted/ros2plugin/5.6.3-1.tar.gz
+    sha256: 686cf56785b33acd7bf9d3c92b5dacf65adcae12a911050869aac4ccede90b86

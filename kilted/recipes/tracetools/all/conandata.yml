@@ -1,0 +1,4 @@
+sources:
+  8.6.0:
+    url: https://github.com/ros2-gbp/ros2_tracing-release/archive/refs/tags/release/kilted/tracetools/8.6.0-2.tar.gz
+    sha256: e9c992227c7858cf760e6c85a7dc3c1df45ed8941a6bfbf9bce9bb8912377a29

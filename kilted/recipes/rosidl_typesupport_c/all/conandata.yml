@@ -1,0 +1,4 @@
+sources:
+  3.3.3:
+    url: https://github.com/ros2-gbp/rosidl_typesupport-release/archive/refs/tags/release/kilted/rosidl_typesupport_c/3.3.3-2.tar.gz
+    sha256: 44de15f635e5aaed8a0e0665fa9350b580b7898a8a189668868d473bd9e06047

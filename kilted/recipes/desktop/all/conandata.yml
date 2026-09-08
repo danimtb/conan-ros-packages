@@ -1,0 +1,4 @@
+sources:
+  0.12.0:
+    url: https://github.com/ros2-gbp/variants-release/archive/refs/tags/release/kilted/desktop/0.12.0-2.tar.gz
+    sha256: 35eaee97cc86e4196ea0591c96d7aab53b089e5db998bc8852ff49909692ca34

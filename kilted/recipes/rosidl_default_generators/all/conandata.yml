@@ -1,0 +1,4 @@
+sources:
+  1.7.2:
+    url: https://github.com/ros2-gbp/rosidl_defaults-release/archive/refs/tags/release/kilted/rosidl_default_generators/1.7.2-1.tar.gz
+    sha256: 2c88f10c9a22a76c885457bb8573014bf575f0f6ca132d2c7a58d159a94296f7

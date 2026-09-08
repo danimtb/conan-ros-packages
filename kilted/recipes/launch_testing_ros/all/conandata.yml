@@ -1,0 +1,4 @@
+sources:
+  0.28.5:
+    url: https://github.com/ros2-gbp/launch_ros-release/archive/refs/tags/release/kilted/launch_testing_ros/0.28.5-1.tar.gz
+    sha256: 9ce714d6acf8a52e44e28e551309d4d15c5cd6e2bf5c0cd141101d04de1a5b6f

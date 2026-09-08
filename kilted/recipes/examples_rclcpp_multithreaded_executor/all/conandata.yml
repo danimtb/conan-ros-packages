@@ -1,0 +1,4 @@
+sources:
+  0.20.6:
+    url: https://github.com/ros2-gbp/examples-release/archive/refs/tags/release/kilted/examples_rclcpp_multithreaded_executor/0.20.6-2.tar.gz
+    sha256: 318f84ab2c685fadcf8f06394a0193e1890bf7ae9ec25e5199b9581de99f10c0

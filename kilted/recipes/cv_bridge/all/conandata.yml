@@ -1,0 +1,4 @@
+sources:
+  4.1.0:
+    url: https://github.com/ros2-gbp/vision_opencv-release/archive/refs/tags/release/kilted/cv_bridge/4.1.0-2.tar.gz
+    sha256: 1deb448a5b89c423ad7abea333b56ac0cb170d9bcf234facd5937cb76c0d2cdc

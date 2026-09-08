@@ -1,0 +1,4 @@
+sources:
+  4.3.7:
+    url: https://github.com/ros2-gbp/diagnostics-release/archive/refs/tags/release/kilted/diagnostic_updater/4.3.7-1.tar.gz
+    sha256: 5e4a9db9c7713480b5a03c80cad7532b46566e2b9016effef5f1ebc8d9d27d62

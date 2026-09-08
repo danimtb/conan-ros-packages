@@ -1,0 +1,4 @@
+sources:
+  6.9.10:
+    url: https://github.com/ros2-gbp/rcutils-release/archive/refs/tags/release/kilted/rcutils/6.9.10-1.tar.gz
+    sha256: 2a31bbb76c7c1cdff14994ccfb043ccbd1ed45a4f6509ff57321c119d921b25e

@@ -1,0 +1,4 @@
+sources:
+  6.1.4:
+    url: https://github.com/ros2-gbp/image_common-release/archive/refs/tags/release/kilted/camera_info_manager/6.1.4-1.tar.gz
+    sha256: 55de1d33f893a428077ca92779588111cc3f4a9171459a638f0ce0925012fdc5

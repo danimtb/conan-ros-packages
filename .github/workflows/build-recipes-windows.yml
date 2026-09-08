@@ -1,0 +1,110 @@
+name: Build ROS recipes (Windows)
+
+on:
+  pull_request:
+    paths:
+      - "kilted/**"
+      - "examples/**"
+      - "profiles/**"
+      - "tools/**"
+      - ".github/workflows/build-recipes-windows.yml"
+  push:
+    branches: [main]
+    paths:
+      - "kilted/**"
+      - "examples/**"
+      - "profiles/**"
+      - "tools/**"
+      - ".github/workflows/build-recipes-windows.yml"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: windows · all recipes
+    runs-on: windows-2022
+    env:
+      CONAN_HOME: C:/.c2
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Enable long paths
+        run: git config --global core.longpaths true
+
+      - uses: actions/checkout@v4
+
+      - uses: jwlawson/actions-setup-cmake@v2.2
+        with:
+          cmake-version: "3.31.0"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Restore Conan cache
+        uses: actions/cache@v4
+        with:
+          path: C:/.c2
+          key: conan-win-${{ hashFiles('kilted/packages.lock.yaml', 'kilted/distro.yaml', 'kilted/extra/**', 'kilted/recipes/**') }}
+          restore-keys: |
+            conan-win-
+
+      - name: Clean PATH
+        shell: pwsh
+        run: |
+          $path = ($env:PATH -split ';') | Where-Object { $_ -and $_ -notmatch 'Service.Fabric' -and -not (Test-Path (Join-Path $_ 'sh.exe') -ErrorAction SilentlyContinue) }
+          "PATH=$($path -join ';')" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Install tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install conan pyyaml
+          mkdir -p "$CONAN_HOME"
+          conan profile detect
+
+      - name: Check generated recipes
+        run: |
+          python tools/gen_ros_recipes.py --distro kilted --lock
+          if [ -n "$(git status --porcelain -- kilted/packages.lock.yaml kilted/recipes)" ]; then
+            git status -- kilted/packages.lock.yaml kilted/recipes
+            git diff -- kilted/packages.lock.yaml kilted/recipes | head -n 200
+            echo "Generated files drifted from the commit. Re-run --lock and commit."
+            exit 1
+          fi
+
+      - name: Build all generated recipes
+        run: |
+          conan remote add ros-kilted ./kilted --type=local-recipes-index --force
+          requires_output=$(python - <<'PY'
+          import yaml
+
+          with open("kilted/packages.lock.yaml", encoding="utf-8") as handle:
+              lock = yaml.safe_load(handle) or {}
+          requested = lock.get("requested_packages") or []
+          packages = lock.get("packages") or {}
+          missing = [name for name in requested if name not in packages]
+          if not requested:
+              raise SystemExit("packages.lock.yaml has no requested_packages")
+          if missing:
+              raise SystemExit(f"Packages missing from lock: {', '.join(missing)}")
+          user = lock["conan_user"]
+          for name in requested:
+              print(f"--requires={name}/{packages[name]['version']}@{user}")
+          PY
+          )
+          mapfile -t requires <<< "$requires_output"
+          conan install "${requires[@]}" -pr:a profiles/ros \
+            --output-folder kilted/.build/all --update --build=missing \
+            -c tools.env.virtualenv:powershell=powershell.exe
+
+      - name: Example consumer_cmake
+        working-directory: examples/consumer_cmake
+        run: python run.py
+
+      - name: Example consumer_workspace
+        working-directory: examples/consumer_workspace
+        run: python run.py
+
+      - name: Example consumer_colcon
+        working-directory: examples/consumer_colcon
+        run: python run.py

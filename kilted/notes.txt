@@ -1,3 +1,0 @@
-ament_package
-ament_lint
-ament_cmake
