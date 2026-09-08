@@ -76,7 +76,13 @@ jobs:
         run: |
           conan remote add ros-kilted ./kilted --type=local-recipes-index --force
           requires_output=$(python - <<'PY'
+          import sys
+
           import yaml
+
+          # print() would end every line with CRLF on Windows and `mapfile -t` only
+          # strips the LF, leaving a CR glued to each reference but the last one.
+          sys.stdout.reconfigure(newline="\n")
 
           with open("kilted/packages.lock.yaml", encoding="utf-8") as handle:
               lock = yaml.safe_load(handle) or {}
