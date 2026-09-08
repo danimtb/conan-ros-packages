@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_regulated_pure_pursuit_controller/1.4.2-1.tar.gz
+    sha256: c610fe1e750db1419d5dc3aaa4d8939cb97ea9a943ec455e9ea5ee3dccf1b7da
