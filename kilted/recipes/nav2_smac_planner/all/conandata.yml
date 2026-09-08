@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_smac_planner/1.4.2-1.tar.gz
+    sha256: 4706f3cd45bb8ca7b1169dab5d8bc9e0a47b8418f1f35ffe88af340ce13e18e1

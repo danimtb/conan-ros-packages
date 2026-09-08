@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_behaviors/1.4.2-1.tar.gz
+    sha256: db85c36b337c0d68b8245c1853a96ad347a3d7f954098cacb790d733e6c2cd94

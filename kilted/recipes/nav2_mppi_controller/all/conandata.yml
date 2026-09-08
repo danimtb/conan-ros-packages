@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_mppi_controller/1.4.2-1.tar.gz
+    sha256: ab9f1716789363eb83aad8d548dab7ecd3d534f5fee74ffb79d22277a22e9901

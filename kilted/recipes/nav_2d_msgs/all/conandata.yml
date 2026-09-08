@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav_2d_msgs/1.4.2-1.tar.gz
+    sha256: 63f81d06b78a8a33b26279e5a9417760799555ac87d4e33993173c5673fa89d6

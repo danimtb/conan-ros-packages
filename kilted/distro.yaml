@@ -9,6 +9,7 @@ conan_user: ros-kilted
 packages:
   - desktop
   - perception
+  - navigation2
 
 # Every package.xml <depend> that is not another ROS package in the generated set
 # has to be resolved here. An unmapped key is a hard error: silently dropping a
@@ -89,6 +90,14 @@ requires:
   zlib: zlib/[>=1.2.11 <2]
   libogg: ogg/1.3.5
   libtheora: theora/1.1.1
+  # navigation2. boost is the same pin as libboost-dev: ompl's package.xml uses the
+  # unsplit key, and flann/ceres/zmq/nanoflann/geographiclib are on ConanCenter.
+  boost: boost/1.83.0
+  libzmq3-dev: zeromq/4.3.5
+  libceres-dev: ceres-solver/2.2.0
+  libnanoflann-dev: nanoflann/1.9.0
+  libflann-dev: flann/1.9.2
+  geographiclib: geographiclib/2.3
 
 tool_requires:
   cmake: cmake/3.29.3
@@ -131,6 +140,14 @@ ignore:
   # second, independently compiled OpenCV into the same process. Anyone who wants the
   # python half installs it themselves, against the OpenCV the graph already has.
   python3-opencv: the C++ side links libopencv-dev, and opencv-python vendors a second copy
+  # navigation2. libdw is elfutils, Linux only; backward_ros uses DbgHelp on Windows.
+  libdw-dev: elfutils/libdw, Linux only, backward_ros uses DbgHelp on Windows
+  # bondcpp pkg-configs libuuid on Linux and hardcodes Rpcrt4.lib on Windows.
+  uuid: POSIX libuuid, bondcpp links Rpcrt4 on Windows
+  # Type stubs for PyYAML. nav2_common never imports them; python3-yaml is the runtime.
+  python3-types-pyyaml: typing stubs, not imported at runtime
+  # Listed as <depend> in nav2_mppi_controller but only consumed under BUILD_TESTING.
+  benchmark: google-benchmark, only the mppi benchmark/ tree, and BUILD_TESTING=False
 
 # Python rosdep keys that have to reach consumers become real Conan packages, generated
 # from PyPI, that publish their site-packages on PYTHONPATH. A virtualenv cannot do this:
@@ -231,6 +248,10 @@ skip_packages:
   camera_calibration: is nothing but cv2, which is not in the graph
   # An icon theme fetched as a tarball by ament_vendor(); nothing links against it.
   tango_icons_vendor: downloads an icon theme, no library to hand it
+  # navigation2. nav2_map_server find_packages GraphicsMagick++ through a custom Find
+  # module; ConanCenter has no graphicsmagick recipe (only an unanswered CCI request).
+  # Cutting this one package is enough: the metapackage still generates, without map IO.
+  nav2_map_server: needs GraphicsMagick, which is not on ConanCenter
 
 # Requirements a package needs but does not declare, because upstream fetches and builds
 # the library itself with ament_vendor(). Supplying it through CMakeDeps makes the vendor
@@ -239,6 +260,8 @@ extra_requires:
   foonathan_memory_vendor: [foonathan-memory/0.7.3]
   pybind11_vendor: [pybind11/2.11.1]
   mcap_vendor: [mcap/1.4.1]
+  # package.xml only declares libzmq3-dev; Groot logging also find_packages SQLite3.
+  behaviortree_cpp: [sqlite3/3.45.2]
 
 # Per-package CMake cache variables. This is where the granular model pays what the monolith
 # pays in patches, and it is cheaper: a variable is a line of configuration, a patch is a
@@ -272,6 +295,12 @@ cmake_variables:
   # at all, so the link of the filter chain executables fails on the missing .lib rather
   # than on the symbols.
   laser_filters:
+    CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS: literal:ON
+  # Groot, the CLI tools and the tutorials are optional; the library is what nav2 links.
+  behaviortree_cpp:
+    BTCPP_EXAMPLES: literal:OFF
+    BTCPP_BUILD_TOOLS: literal:OFF
+    BTCPP_SQLITE_LOGGING: literal:ON
     CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS: literal:ON
 
 # CMake target renames for dependencies. Same root cause as the block above, seen from the
