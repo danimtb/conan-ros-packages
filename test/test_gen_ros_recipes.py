@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 import gen_ros_recipes  # noqa: E402
+import ros_pkgxml  # noqa: E402
 import rosdistro_index as rdi  # noqa: E402
 
 
@@ -75,6 +76,41 @@ class LockManifestTest(unittest.TestCase):
             lock,
         )
         self.assertNotIn("variant", lock)
+
+
+class LineEndingsTest(unittest.TestCase):
+    """Generated files are byte-identical on Windows and Linux.
+
+    Text written with the platform default would come out CRLF on Windows, so the drift
+    check would fail for whoever did not regenerate on the same OS as the last commit.
+    """
+
+    SPEC = ros_pkgxml.RecipeSpec(
+        name="ament_cmake_core",
+        version="2.7.5",
+        user="ros-test",
+        license="Apache-2.0",
+        build_type="ament_cmake",
+        from_source=True,
+    )
+
+    def test_recipes_are_written_with_lf(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            gen_ros_recipes._write_recipe(
+                out, self.SPEC, source={"url": "https://example.test/x.tar.gz", "sha256": "0" * 64}
+            )
+            written = sorted((out / "recipes").rglob("*"))
+            self.assertTrue([p for p in written if p.is_file()])
+            for path in written:
+                if path.is_file():
+                    self.assertNotIn(b"\r", path.read_bytes(), path)
+
+    def test_lock_is_written_with_lf(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "packages.lock.yaml"
+            gen_ros_recipes._write(path, "a\nb\n")
+            self.assertEqual(path.read_bytes(), b"a\nb\n")
 
 
 class ExtraPackagesTest(unittest.TestCase):
