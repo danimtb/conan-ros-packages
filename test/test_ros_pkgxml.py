@@ -80,6 +80,7 @@ class TestRosPkgXml(unittest.TestCase):
         self.assertNotIn("exports_sources", text)
         self.assertIn("CMAKE_PREFIX_PATH", text)
         self.assertNotIn("self.buildenv_info.prepend_path(\"CMAKE_PREFIX_PATH\"", text)
+        self.assertIn("VCVars", text)
 
     def test_render_recipe_without_requires(self):
         spec = ros_pkgxml.RecipeSpec(
@@ -154,6 +155,7 @@ class TestRosPkgXml(unittest.TestCase):
         text = ros_pkgxml.render_recipe(spec)
         self.assertIn("del self.info.settings.compiler", text)
         self.assertIn("del self.info.settings.arch", text)
+        self.assertNotIn("VCVars", text)
 
     def test_python_extension_recipe_pins_the_interpreter(self):
         spec = ros_pkgxml.RecipeSpec(

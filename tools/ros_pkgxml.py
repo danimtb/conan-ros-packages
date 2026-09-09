@@ -706,8 +706,13 @@ def _render_cmake_recipe(spec: RecipeSpec) -> str:
     base_imports = [
         "from conan import ConanFile",
         "from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout",
-        "from conan.tools.microsoft import VCVars",
     ]
+    if not spec.arch_independent:
+        # vcvarsall.bat rewrites PATH to several KB of VS dirs. A variant like ros_core
+        # then prepends every dependency bindir; the combined PATH exceeds the Windows
+        # 8191-char cap, `set PATH=` fails, and cmake.exe is gone. These packages are
+        # project(NONE) and never invoke cl.exe, so the generator does not need that env.
+        base_imports.append("from conan.tools.microsoft import VCVars")
     if spec.pkg_config:
         base_imports.append("from conan.tools.gnu import PkgConfigDeps")
     imports = _imports_block(spec, base_imports)
@@ -746,6 +751,8 @@ def _render_cmake_recipe(spec: RecipeSpec) -> str:
         for name, expression in spec.cmake_variables.items()
     ]
     toolchain.append("        tc.generate()")
+    if not spec.arch_independent:
+        toolchain.append("        VCVars(self).generate()")
     toolchain = "\n".join(toolchain)
     return f'''{spec.header}
 import glob
@@ -769,7 +776,6 @@ class RosPackageConan(ConanFile):
     def generate(self):
 {_pyenv_block(spec.pip_requires)}{_cmake_deps_block(spec)}
 {toolchain}
-        VCVars(self).generate()
 
     def build(self):
         cmake = CMake(self)

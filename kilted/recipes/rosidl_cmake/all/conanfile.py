@@ -5,7 +5,6 @@ import sys
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 from conan.tools.files import get
-from conan.tools.microsoft import VCVars
 
 
 class RosPackageConan(ConanFile):
@@ -74,7 +73,6 @@ class RosPackageConan(ConanFile):
         tc.variables["Python_EXECUTABLE"] = python
         tc.variables["Python_ROOT_DIR"] = python_root
         tc.generate()
-        VCVars(self).generate()
 
     def build(self):
         cmake = CMake(self)
