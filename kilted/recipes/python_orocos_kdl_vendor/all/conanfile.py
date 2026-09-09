@@ -76,7 +76,7 @@ class RosPackageConan(ConanFile):
         tc.variables["Python3_ROOT_DIR"] = python_root
         tc.variables["Python_EXECUTABLE"] = python
         tc.variables["Python_ROOT_DIR"] = python_root
-        tc.variables["pykdl_FOUND"] = "ON"
+        tc.variables["pykdl_FOUND"] = 'ON'
         tc.generate()
         VCVars(self).generate()
 
