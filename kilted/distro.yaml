@@ -400,15 +400,14 @@ patches:
         project(image_rotate)
         add_compile_definitions(_USE_MATH_DEFINES)
 
-  # FindBoost names the component pythonXY (python312 here). ConanCenter's Boost recipe
-  # builds that library (without_python=false) but CMakeDeps only declares Boost::python.
-  # The first find_package(Boost QUIET) already sets Boost_FOUND, so the REQUIRED
-  # COMPONENTS python312 call is a no-op and configure continues until
-  # target_link_libraries asks for a target that was never created.
+  # CMake's FindBoost.cmake wins the QUIET lookup (headers only, no Conan targets).
+  # That sets Boost_FOUND, so the later COMPONENTS call is skipped and neither
+  # Boost::python312 nor Boost::python exists at generate time. CONFIG forces
+  # CMakeDeps, whose component is `python` (the .lib is still boost_python312).
   cv_bridge:
     - file: CMakeLists.txt
-      search: "    find_package(Boost REQUIRED COMPONENTS python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR})\n    set(boost_python_target \"Boost::python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}\")"
-      replace: "    find_package(Boost REQUIRED COMPONENTS python)\n    set(boost_python_target \"Boost::python\")"
+      search: "  find_package(Python3 REQUIRED COMPONENTS Development NumPy)\n  find_package(Boost QUIET)\n  if(Boost_VERSION_STRING VERSION_LESS \"1.67\")\n    # This is a bit of a hack to suppress a warning\n    #   No header defined for python3; skipping header check\n    # Which should only affect Boost versions < 1.67\n    # Resolution for newer versions:\n    #  https://gitlab.kitware.com/cmake/cmake/issues/16391\n    set(_Boost_PYTHON3_HEADERS \"boost/python.hpp\")\n    find_package(Boost REQUIRED COMPONENTS python3)\n    set(boost_python_target \"Boost::python3\")\n  else()\n    find_package(Boost REQUIRED COMPONENTS python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR})\n    set(boost_python_target \"Boost::python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}\")\n  endif()"
+      replace: "  find_package(Python3 REQUIRED COMPONENTS Development NumPy)\n  find_package(Boost REQUIRED CONFIG COMPONENTS python)\n  set(boost_python_target \"Boost::python\")"
 
   # Upstream asks pkg-config for ogg and theora and then uses only the _LIBRARIES it
   # returns, never the _INCLUDE_DIRS or _LIBRARY_DIRS: on Debian both libraries are in the

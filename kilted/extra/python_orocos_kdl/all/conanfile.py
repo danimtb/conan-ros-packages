@@ -47,6 +47,7 @@ class PythonOrocosKdlConan(ConanFile):
             "boost/1.83.0",
             transitive_headers=True,
             transitive_libs=True,
+            options={"without_python": False},
         )
 
     def source(self):

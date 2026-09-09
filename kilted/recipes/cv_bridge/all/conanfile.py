@@ -87,8 +87,8 @@ class RosPackageConan(ConanFile):
         replace_in_file(
             self,
             os.path.join(self.source_folder, 'CMakeLists.txt'),
-            '    find_package(Boost REQUIRED COMPONENTS python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR})\n    set(boost_python_target "Boost::python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}")',
-            '    find_package(Boost REQUIRED COMPONENTS python)\n    set(boost_python_target "Boost::python")',
+            '  find_package(Python3 REQUIRED COMPONENTS Development NumPy)\n  find_package(Boost QUIET)\n  if(Boost_VERSION_STRING VERSION_LESS "1.67")\n    # This is a bit of a hack to suppress a warning\n    #   No header defined for python3; skipping header check\n    # Which should only affect Boost versions < 1.67\n    # Resolution for newer versions:\n    #  https://gitlab.kitware.com/cmake/cmake/issues/16391\n    set(_Boost_PYTHON3_HEADERS "boost/python.hpp")\n    find_package(Boost REQUIRED COMPONENTS python3)\n    set(boost_python_target "Boost::python3")\n  else()\n    find_package(Boost REQUIRED COMPONENTS python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR})\n    set(boost_python_target "Boost::python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}")\n  endif()',
+            '  find_package(Python3 REQUIRED COMPONENTS Development NumPy)\n  find_package(Boost REQUIRED CONFIG COMPONENTS python)\n  set(boost_python_target "Boost::python")',
         )
 
     def generate(self):
