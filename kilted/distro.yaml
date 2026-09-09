@@ -273,6 +273,14 @@ cmake_variables:
   # than on the symbols.
   laser_filters:
     CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS: literal:ON
+  # The vendor does `python -c "import PyKDL"` with no PYTHONPATH: generated recipes do
+  # not emit VirtualBuildEnv, so the extra recipe's module is invisible and the fallback
+  # FetchContent-builds the same snapshot. That snapshot uses py::hash(py::self) on types
+  # with no std::hash; MSVC fails template deduction (the extra recipe already drops
+  # those bindings). The extra package is already a requirement; treat the probe as
+  # successful so ament_package() is the only work left.
+  python_orocos_kdl_vendor:
+    pykdl_FOUND: literal:ON
 
 # CMake target renames for dependencies. Same root cause as the block above, seen from the
 # other side: a vendor package ships a Find<X>.cmake declaring one target name, and once the
@@ -315,6 +323,12 @@ dep_options:
 # python_orocos_kdl ships PyKDL.cp312-*.pyd, which no other CPython can import, so
 # python_orocos_kdl_vendor finds no PyKDL and falls back to compiling the bindings itself.
 propagate_python_version:
+  - python_orocos_kdl
+
+# rosdep-mapped requires are compile-time (headers/libs) unless listed here. PyKDL is a
+# .pyd that dependents import; run=True puts its PYTHONPATH, and orocos-kdl's DLL
+# directory, on the consumer.
+run_requires:
   - python_orocos_kdl
 
 # Edits applied to the release tarball in source(). Upstream sources that only ever build

@@ -82,6 +82,7 @@ class RosDepMap:
     cmake_target_names: dict
     dep_options: dict
     propagate_python_version: list
+    run_requires: list
     patches: dict
     path: Path
 
@@ -107,6 +108,7 @@ class RosDepMap:
             cmake_target_names=data.get("cmake_target_names") or {},
             dep_options=data.get("dep_options") or {},
             propagate_python_version=data.get("propagate_python_version") or [],
+            run_requires=data.get("run_requires") or [],
             patches=data.get("patches") or {},
         )
 
@@ -452,6 +454,7 @@ def generate(
                     ros_pkgxml.RecipeRequire(
                         _qualify_ref(value, user, extra_names),
                         options=_dep_options(value, rosdep_map),
+                        run=value.split("/", 1)[0] in rosdep_map.run_requires,
                     )
                 )
             elif section == "tool_requires":

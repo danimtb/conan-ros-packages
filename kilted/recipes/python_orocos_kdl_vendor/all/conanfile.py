@@ -49,6 +49,7 @@ class RosPackageConan(ConanFile):
             "python_orocos_kdl/1.5.1@ros-kilted",
             transitive_headers=True,
             transitive_libs=True,
+            run=True,
             options={"python_version": f"{sys.version_info.major}.{sys.version_info.minor}"},
         )
         self.requires(
@@ -75,6 +76,7 @@ class RosPackageConan(ConanFile):
         tc.variables["Python3_ROOT_DIR"] = python_root
         tc.variables["Python_EXECUTABLE"] = python
         tc.variables["Python_ROOT_DIR"] = python_root
+        tc.variables["pykdl_FOUND"] = "ON"
         tc.generate()
         VCVars(self).generate()
 
