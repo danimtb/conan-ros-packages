@@ -4,7 +4,7 @@ import os
 import sys
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
-from conan.tools.files import get
+from conan.tools.files import get, replace_in_file
 from conan.tools.microsoft import VCVars
 
 
@@ -84,6 +84,12 @@ class RosPackageConan(ConanFile):
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'CMakeLists.txt'),
+            '    find_package(Boost REQUIRED COMPONENTS python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR})\n    set(boost_python_target "Boost::python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}")',
+            '    find_package(Boost REQUIRED COMPONENTS python)\n    set(boost_python_target "Boost::python")',
+        )
 
     def generate(self):
         CMakeDeps(self).generate()
