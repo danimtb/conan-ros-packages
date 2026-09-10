@@ -20,9 +20,11 @@ toolchain = (HERE / ".conan" / "conan_toolchain.cmake").as_posix()
 
 if WINDOWS:
     run(rf'. .\.conan\conanbuild.ps1; . .\.conan\conanrun.ps1; '
-        rf'colcon build --symlink-install --cmake-args "-DCMAKE_TOOLCHAIN_FILE={toolchain}"')
+        rf'colcon build --symlink-install --cmake-args "-DCMAKE_TOOLCHAIN_FILE={toolchain}"',
+        reset_path=True)
     run(r". .\.conan\conanrun.ps1; . .\install\setup.ps1; "
-        r".\install\consumer_node\lib\consumer_node\consumer_node.exe")
+        r".\install\consumer_node\lib\consumer_node\consumer_node.exe",
+        reset_path=True)
 else:
     run(f'. ./.conan/conanbuild.sh; . ./.conan/conanrun.sh; '
         f'colcon build --symlink-install --cmake-args "-DCMAKE_TOOLCHAIN_FILE={toolchain}"')
