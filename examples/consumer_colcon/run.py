@@ -16,8 +16,7 @@ add_remote()
 
 run(f'conan install . --output-folder=.conan --profile:all "{PROFILE}" --build=missing {PS_CONF}')
 
-# colcon builds each package from its own directory, so the toolchain has to be absolute.
-toolchain = HERE / ".conan" / "conan_toolchain.cmake"
+toolchain = (HERE / ".conan" / "conan_toolchain.cmake").as_posix()
 
 if WINDOWS:
     run(rf'. .\.conan\conanbuild.ps1; . .\.conan\conanrun.ps1; '
