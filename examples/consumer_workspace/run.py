@@ -17,8 +17,7 @@ run(f'conan workspace build --profile:all "{PROFILE}" --build=missing {PS_CONF}'
 
 if WINDOWS:
     run(r". .\consumer_node\build\generators\conanrun.ps1; "
-        r".\consumer_node\build\Release\consumer_node.exe",
-        reset_path=True)
+        r".\consumer_node\build\Release\consumer_node.exe")
 else:
     run(". ./consumer_node/build/Release/generators/conanrun.sh; "
         "./consumer_node/build/Release/consumer_node")

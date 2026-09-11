@@ -8,9 +8,7 @@ does not fit in the environment cmd.exe gives to a .bat activation script.
 from __future__ import annotations
 
 import platform
-import shutil
 import subprocess
-import sys
 from pathlib import Path
 
 WINDOWS = platform.system() == "Windows"
@@ -21,29 +19,8 @@ PROFILE = REPO / "profiles" / "ros"
 PS_CONF = "-c tools.env.virtualenv:powershell=powershell.exe" if WINDOWS else ""
 
 
-def _windows_base_path() -> str:
-    """A PATH short enough that conanrun.ps1 can prepend every package bindir.
-
-    GitHub-hosted runners start with several KB of tool PATH. VirtualRunEnv then
-    prepends `bin` for every `run=True` requirement. `set PATH=` is capped at
-    8191 characters; the assignment fails, rclcpp.dll stays invisible, and the
-    process exits 0xC0000135 (STATUS_DLL_NOT_FOUND).
-    """
-    py = Path(sys.executable).resolve().parent
-    parts = [r"C:\Windows\system32", r"C:\Windows", str(py)]
-    scripts = py / "Scripts"
-    if scripts.is_dir():
-        parts.append(str(scripts))
-    cmake = shutil.which("cmake")
-    if cmake:
-        parts.append(str(Path(cmake).resolve().parent))
-    return ";".join(dict.fromkeys(parts))
-
-
-def run(cmd: str, *, reset_path: bool = False) -> None:
+def run(cmd: str) -> None:
     """Run one shell command in the current directory, echoing it first."""
-    if WINDOWS and reset_path:
-        cmd = f"$env:PATH = '{_windows_base_path()}'; {cmd}"
     print(f"\n$ {cmd}", flush=True)
     if WINDOWS:
         shell = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",

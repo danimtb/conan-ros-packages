@@ -520,7 +520,7 @@ class RosPipPackageConan(ConanFile):
         self.cpp_info.set_property("cmake_find_mode", "none")
         self.cpp_info.includedirs = []
         self.cpp_info.libdirs = []
-        pkg = self.package_folder
+{_runtime_bindirs_block(spec)}        pkg = self.package_folder
 {SITE_PACKAGES_SNIPPET}
         for env in (self.buildenv_info, self.runenv_info):
             for site in site_packages:
@@ -528,6 +528,27 @@ class RosPipPackageConan(ConanFile):
             env.prepend_path("PATH", os.path.join(pkg, "bin"))
             env.prepend_path("PATH", os.path.join(pkg, "Scripts"))
 '''
+
+
+def _runtime_bindirs_block(spec: RecipeSpec) -> str:
+    """What VirtualRunEnv should put on PATH, decided from the package sources.
+
+    The default bindirs is ['bin']. That is wrong in both directions here: ament
+    installs MODULE/SHARED plugins under lib on Windows, and most ROS packages
+    install no native library at all. Empty bindirs still become PATH entries and
+    blow the 8191-character Windows cap before the DLLs that do exist are visible.
+    """
+    if spec.arch_independent or spec.build_type in PYTHON_BUILD_TYPES or spec.build_type == PIP:
+        return (
+            "        # No native runtime library: do not spend PATH on an empty bin/.\n"
+            "        self.cpp_info.bindirs = []\n"
+        )
+    if spec.build_type in CMAKE_BUILD_TYPES:
+        return (
+            "        # ament: executables in bin, MODULE/SHARED plugins in lib.\n"
+            "        self.cpp_info.bindirs = [\"bin\", \"lib\"]\n"
+        )
+    return ""
 
 
 def _shared_option_block(spec: RecipeSpec) -> str:
@@ -789,7 +810,7 @@ class RosPackageConan(ConanFile):
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "none")
         pkg = self.package_folder
-{builddirs_block}
+{_runtime_bindirs_block(spec)}{builddirs_block}
 {SITE_PACKAGES_SNIPPET}
         # Not in buildenv: CMakeToolchain already puts every dependency's builddirs in
         # CMAKE_PREFIX_PATH inside conan_toolchain.cmake, a file with no length limit,
@@ -867,7 +888,7 @@ class RosPackageConan(ConanFile):
         self.cpp_info.set_property("cmake_find_mode", "none")
         self.cpp_info.includedirs = []
         self.cpp_info.libdirs = []
-        pkg = self.package_folder
+{_runtime_bindirs_block(spec)}        pkg = self.package_folder
 {SITE_PACKAGES_SNIPPET}
         for env in (self.buildenv_info, self.runenv_info):
 {env_lines}            for site in site_packages:

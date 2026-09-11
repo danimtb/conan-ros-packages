@@ -16,15 +16,15 @@ add_remote()
 
 run(f'conan install . --output-folder=.conan --profile:all "{PROFILE}" --build=missing {PS_CONF}')
 
+# colcon builds each package from its own directory, so the toolchain has to be
+# absolute. Forward slashes: CMake treats \ in -D values as escapes (D:\a\... on GHA).
 toolchain = (HERE / ".conan" / "conan_toolchain.cmake").as_posix()
 
 if WINDOWS:
     run(rf'. .\.conan\conanbuild.ps1; . .\.conan\conanrun.ps1; '
-        rf'colcon build --symlink-install --cmake-args "-DCMAKE_TOOLCHAIN_FILE={toolchain}"',
-        reset_path=True)
+        rf'colcon build --symlink-install --cmake-args "-DCMAKE_TOOLCHAIN_FILE={toolchain}"')
     run(r". .\.conan\conanrun.ps1; . .\install\setup.ps1; "
-        r".\install\consumer_node\lib\consumer_node\consumer_node.exe",
-        reset_path=True)
+        r".\install\consumer_node\lib\consumer_node\consumer_node.exe")
 else:
     run(f'. ./.conan/conanbuild.sh; . ./.conan/conanrun.sh; '
         f'colcon build --symlink-install --cmake-args "-DCMAKE_TOOLCHAIN_FILE={toolchain}"')

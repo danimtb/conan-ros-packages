@@ -23,7 +23,6 @@ else:
 run("cmake --build --preset conan-release")
 
 if WINDOWS:
-    run(r". .\build\generators\conanrun.ps1; .\build\Release\consumer_node.exe",
-        reset_path=True)
+    run(r". .\build\generators\conanrun.ps1; .\build\Release\consumer_node.exe")
 else:
     run(". ./build/Release/generators/conanrun.sh; ./build/Release/consumer_node")

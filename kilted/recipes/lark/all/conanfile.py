@@ -41,6 +41,8 @@ class RosPipPackageConan(ConanFile):
         self.cpp_info.set_property("cmake_find_mode", "none")
         self.cpp_info.includedirs = []
         self.cpp_info.libdirs = []
+        # No native runtime library: do not spend PATH on an empty bin/.
+        self.cpp_info.bindirs = []
         pkg = self.package_folder
         site_packages = [os.path.join(pkg, "Lib", "site-packages")] + sorted(
             glob.glob(os.path.join(pkg, "lib", "python*", "site-packages")))

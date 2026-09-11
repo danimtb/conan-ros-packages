@@ -86,6 +86,8 @@ class RosPackageConan(ConanFile):
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "none")
         pkg = self.package_folder
+        # No native runtime library: do not spend PATH on an empty bin/.
+        self.cpp_info.bindirs = []
         self.cpp_info.builddirs.append(pkg)
         self.cpp_info.builddirs.append(os.path.join(pkg, "share", self.name, "cmake"))
         site_packages = [os.path.join(pkg, "Lib", "site-packages")] + sorted(
