@@ -126,6 +126,8 @@ class ExtraPackagesTest(unittest.TestCase):
         self.assertIn("orocos_kdl/1.5.1@ros-kilted", pykdl.read_text(encoding="utf-8"))
         rosdep_map = gen_ros_recipes.RosDepMap.load(config.rosdep_map_path)
         self.assertIn("python_orocos_kdl", rosdep_map.run_requires)
+        self.assertIn("openssl", rosdep_map.run_requires)
+        self.assertIn("tinyxml2", rosdep_map.run_requires)
 
     def test_copy_extra_replaces_generated_recipe_dir(self):
         with tempfile.TemporaryDirectory() as tmp:

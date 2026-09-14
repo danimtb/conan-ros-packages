@@ -70,5 +70,3 @@ class RosPackageConan(ConanFile):
             env.prepend_path("AMENT_PREFIX_PATH", pkg)
             for site in site_packages:
                 env.prepend_path("PYTHONPATH", site)
-            env.prepend_path("PATH", os.path.join(pkg, "bin"))
-            env.prepend_path("PATH", os.path.join(pkg, "Scripts"))

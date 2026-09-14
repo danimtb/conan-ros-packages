@@ -327,9 +327,31 @@ propagate_python_version:
 
 # rosdep-mapped requires are compile-time (headers/libs) unless listed here. PyKDL is a
 # .pyd that dependents import; run=True puts its PYTHONPATH, and orocos-kdl's DLL
-# directory, on the consumer.
+# directory, on the consumer. Shared ConanCenter libraries that a process LoadLibrary()s
+# (FastDDS -> openssl/tinyxml2, rcl -> libyaml, ...) need the same, or VirtualRunEnv
+# never puts their bindirs on PATH.
 run_requires:
   - python_orocos_kdl
+  - openssl
+  - tinyxml2
+  - spdlog
+  - libyaml
+  - zlib
+  - lz4
+  - zstd
+  - sqlite3
+  - yaml-cpp
+  - console_bridge
+  - foonathan-memory
+  - libcurl
+  - assimp
+  - freetype
+  - glew
+  - sdl
+  - qt
+  - opencv
+  - pcl
+  - boost
 
 # Edits applied to the release tarball in source(). Upstream sources that only ever build
 # under colcon can assume things Conan does not provide, and there is no other place to

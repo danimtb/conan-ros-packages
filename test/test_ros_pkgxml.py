@@ -95,6 +95,20 @@ class TestRosPkgXml(unittest.TestCase):
         self.assertNotIn("def requirements", text)
         self.assertIn("AMENT_PREFIX_PATH", text)
         self.assertIn("self.cpp_info.bindirs = []", text)
+        self.assertNotIn('prepend_path("PATH"', text)
+
+    def test_python_console_scripts_are_put_on_path(self):
+        spec = ros_pkgxml.RecipeSpec(
+            name="ros2cli",
+            version="0.0.0",
+            user="ros-kilted",
+            license="Apache-2.0",
+            build_type="ament_python",
+            from_source=True,
+            console_scripts=True,
+        )
+        text = ros_pkgxml.render_recipe(spec)
+        self.assertIn('prepend_path("PATH", os.path.join(pkg, "Scripts"))', text)
 
     def test_render_pip_recipe(self):
         spec = ros_pkgxml.RecipeSpec(
@@ -110,6 +124,7 @@ class TestRosPkgXml(unittest.TestCase):
         self.assertIn("PYTHONPATH", text)
         self.assertNotIn("CMakeToolchain", text)
         self.assertIn("self.cpp_info.bindirs = []", text)
+        self.assertNotIn('prepend_path("PATH"', text)
 
     def test_pkg_config_and_vendored_prefix(self):
         spec = ros_pkgxml.RecipeSpec(
@@ -159,7 +174,7 @@ class TestRosPkgXml(unittest.TestCase):
         self.assertIn("del self.info.settings.arch", text)
         self.assertNotIn("VCVars", text)
         self.assertIn("self.cpp_info.bindirs = []", text)
-        self.assertNotIn('self.cpp_info.bindirs = ["bin", "lib"]', text)
+        self.assertNotIn('package_type = "shared-library"', text)
 
     def test_compiling_cmake_recipe_publishes_bin_and_lib_on_path(self):
         spec = ros_pkgxml.RecipeSpec(
@@ -171,7 +186,8 @@ class TestRosPkgXml(unittest.TestCase):
             from_source=True,
         )
         text = ros_pkgxml.render_recipe(spec)
-        self.assertIn('self.cpp_info.bindirs = ["bin", "lib"]', text)
+        self.assertIn('self.cpp_info.bindirs = ["bin"]', text)
+        self.assertIn('package_type = "shared-library"', text)
 
     def test_python_extension_recipe_pins_the_interpreter(self):
         spec = ros_pkgxml.RecipeSpec(
@@ -203,6 +219,16 @@ class TestRosPkgXml(unittest.TestCase):
             self.assertTrue(
                 ros_pkgxml.installs_vendored_prefix(
                     "ament_cmake", ros_pkgxml.package_file_reader(vendor)
+                )
+            )
+            cli = _write_pkg(Path(tmp), "ros2cli", build_type="ament_python")
+            (cli / "setup.cfg").write_text(
+                "[options.entry_points]\nconsole_scripts =\n    ros2 = ros2cli.cli:main\n",
+                encoding="utf-8",
+            )
+            self.assertTrue(
+                ros_pkgxml.installs_console_scripts(
+                    "ament_python", ros_pkgxml.package_file_reader(cli)
                 )
             )
 

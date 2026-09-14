@@ -169,6 +169,28 @@ def looks_up_deps_with_pkg_config(build_type: str, read_text) -> bool:
     )
 
 
+_CONSOLE_SCRIPTS_RE = re.compile(
+    r"\[options\.entry_points\]|\[project\.scripts\]|console_scripts\s*[=:]",
+    re.IGNORECASE,
+)
+
+
+def installs_console_scripts(build_type: str, read_text) -> bool:
+    """True when the package installs an executable script onto PATH.
+
+    VirtualRunEnv does not need those directories for a C++ node, and prepending
+    bin/ and Scripts/ for every pure-python package is what fills the Windows PATH
+    budget before the DLLs that do matter. Only packages that declare console
+    scripts keep those entries.
+    """
+    if build_type not in PYTHON_BUILD_TYPES:
+        return False
+    return any(
+        _CONSOLE_SCRIPTS_RE.search(read_text(name))
+        for name in ("setup.cfg", "setup.py", "pyproject.toml")
+    )
+
+
 def embeds_python_extension(build_type: str, read_text) -> bool:
     """True when the package installs an extension module.
 
@@ -300,6 +322,8 @@ class RecipeSpec:
     vendored_prefix: bool = False
     # The package calls pkg_check_modules(), which needs .pc files, not CMake configs.
     pkg_config: bool = False
+    # setuptools/pyproject declares console_scripts (or equivalent) that belong on PATH.
+    console_scripts: bool = False
     # CMake cache variable -> python expression, emitted verbatim into generate().
     cmake_variables: dict = field(default_factory=dict)
     # Dependency name -> the CMake target name this package expects it to have.
@@ -525,9 +549,33 @@ class RosPipPackageConan(ConanFile):
         for env in (self.buildenv_info, self.runenv_info):
             for site in site_packages:
                 env.prepend_path("PYTHONPATH", site)
-            env.prepend_path("PATH", os.path.join(pkg, "bin"))
-            env.prepend_path("PATH", os.path.join(pkg, "Scripts"))
-'''
+{_python_path_block(spec)}'''
+
+
+def _package_type_block(spec: RecipeSpec) -> str:
+    """Shared ament libraries must enter VirtualRunEnv for every consumer.
+
+    conanfile.txt cannot set run=True. Without package_type, a node that links
+    rclcpp.dll does not get rclcpp/bin on PATH and dies with STATUS_DLL_NOT_FOUND.
+    """
+    if spec.build_type in CMAKE_BUILD_TYPES and not spec.arch_independent:
+        return '    package_type = "shared-library"\n'
+    return ""
+
+
+def _python_path_block(spec: RecipeSpec) -> str:
+    """PATH entries for console scripts, or nothing.
+
+    bindirs is already empty for these packages. Adding bin/ and Scripts/ for
+    every pip or ament_python prefix is what filled PATH on Windows before the
+    native runtime directories.
+    """
+    if not spec.console_scripts:
+        return ""
+    return (
+        '            env.prepend_path("PATH", os.path.join(pkg, "bin"))\n'
+        '            env.prepend_path("PATH", os.path.join(pkg, "Scripts"))\n'
+    )
 
 
 def _runtime_bindirs_block(spec: RecipeSpec) -> str:
@@ -545,8 +593,8 @@ def _runtime_bindirs_block(spec: RecipeSpec) -> str:
         )
     if spec.build_type in CMAKE_BUILD_TYPES:
         return (
-            "        # ament: executables in bin, MODULE/SHARED plugins in lib.\n"
-            "        self.cpp_info.bindirs = [\"bin\", \"lib\"]\n"
+            "        # ament on Windows installs RUNTIME (exe and DLL) under bin/.\n"
+            "        self.cpp_info.bindirs = [\"bin\"]\n"
         )
     return ""
 
@@ -790,7 +838,7 @@ class RosPackageConan(ConanFile):
     user = "{spec.user}"
     license = {spec.license!r}
     settings = "os", "compiler", "build_type", "arch"
-{_python_version_block(spec)}{sources}
+{_package_type_block(spec)}{_python_version_block(spec)}{sources}
     def layout(self):
 {layout}
 {_package_id_block(spec)}{_requirements_block(spec.requires)}{_build_requirements_block(spec.tool_requires)}{_source_block(spec)}
@@ -893,8 +941,6 @@ class RosPackageConan(ConanFile):
         for env in (self.buildenv_info, self.runenv_info):
 {env_lines}            for site in site_packages:
                 env.prepend_path("PYTHONPATH", site)
-            env.prepend_path("PATH", os.path.join(pkg, "bin"))
-            env.prepend_path("PATH", os.path.join(pkg, "Scripts"))
-'''
+{_python_path_block(spec)}'''
 
 
