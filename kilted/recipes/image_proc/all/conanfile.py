@@ -62,8 +62,8 @@ class RosPackageConan(ConanFile):
             "opencv/4.12.0",
             transitive_headers=True,
             transitive_libs=True,
-            options={"aruco": "True"},
             run=True,
+            options={"aruco": "True"},
         )
         self.requires(
             "rclcpp/29.5.8@ros-kilted",

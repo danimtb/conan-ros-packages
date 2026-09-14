@@ -38,15 +38,15 @@ class RosPackageConan(ConanFile):
             "boost/1.83.0",
             transitive_headers=True,
             transitive_libs=True,
-            options={"without_python": "False"},
             run=True,
+            options={"without_python": "False"},
         )
         self.requires(
             "opencv/4.12.0",
             transitive_headers=True,
             transitive_libs=True,
-            options={"aruco": "True"},
             run=True,
+            options={"aruco": "True"},
         )
         self.requires(
             "numpy/2.3.2@ros-kilted",

@@ -38,8 +38,8 @@ class RosPackageConan(ConanFile):
             "qt/5.15.19",
             transitive_headers=True,
             transitive_libs=True,
-            options={"shared": "True"},
             run=True,
+            options={"shared": "True"},
         )
         self.requires(
             "message_filters/7.1.10@ros-kilted",

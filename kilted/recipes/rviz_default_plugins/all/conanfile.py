@@ -62,8 +62,8 @@ class RosPackageConan(ConanFile):
             "qt/5.15.19",
             transitive_headers=True,
             transitive_libs=True,
-            options={"shared": "True"},
             run=True,
+            options={"shared": "True"},
         )
         self.requires(
             "map_msgs/2.5.0@ros-kilted",

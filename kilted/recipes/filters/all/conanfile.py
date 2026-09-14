@@ -32,8 +32,8 @@ class RosPackageConan(ConanFile):
             "boost/1.83.0",
             transitive_headers=True,
             transitive_libs=True,
-            options={"without_python": "False"},
             run=True,
+            options={"without_python": "False"},
         )
         self.requires(
             "pluginlib/5.6.3@ros-kilted",

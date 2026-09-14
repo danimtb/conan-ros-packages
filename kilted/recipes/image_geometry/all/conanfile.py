@@ -38,8 +38,8 @@ class RosPackageConan(ConanFile):
             "opencv/4.12.0",
             transitive_headers=True,
             transitive_libs=True,
-            options={"aruco": "True"},
             run=True,
+            options={"aruco": "True"},
         )
         self.requires(
             "deprecated/1.2.15@ros-kilted",

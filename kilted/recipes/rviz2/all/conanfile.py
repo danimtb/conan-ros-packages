@@ -32,8 +32,8 @@ class RosPackageConan(ConanFile):
             "qt/5.15.19",
             transitive_headers=True,
             transitive_libs=True,
-            options={"shared": "True"},
             run=True,
+            options={"shared": "True"},
         )
         self.requires(
             "rviz_common/15.0.13@ros-kilted",

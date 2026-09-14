@@ -32,8 +32,8 @@ class RosPackageConan(ConanFile):
             "sdl/2.32.10",
             transitive_headers=True,
             transitive_libs=True,
-            options={"shared": "True"},
             run=True,
+            options={"shared": "True"},
         )
         self.requires(
             "catkin_pkg/1.1.0@ros-kilted",

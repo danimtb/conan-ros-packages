@@ -44,8 +44,8 @@ class RosPackageConan(ConanFile):
             "qt/5.15.19",
             transitive_headers=True,
             transitive_libs=True,
-            options={"shared": "True"},
             run=True,
+            options={"shared": "True"},
         )
         self.requires(
             "rclcpp/29.5.8@ros-kilted",
