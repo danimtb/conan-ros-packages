@@ -126,6 +126,20 @@ class TestRosPkgXml(unittest.TestCase):
         self.assertIn("self.cpp_info.bindirs = []", text)
         self.assertNotIn('prepend_path("PATH"', text)
 
+    def test_pip_console_scripts_are_put_on_path(self):
+        spec = ros_pkgxml.RecipeSpec(
+            name="vcstool",
+            version="0.3.0",
+            user="ros-kilted",
+            license="unknown",
+            build_type=ros_pkgxml.PIP,
+            pip_install="vcstool==0.3.0",
+            console_scripts=True,
+        )
+        text = ros_pkgxml.render_recipe(spec)
+        self.assertIn('prepend_path("PATH", os.path.join(pkg, "Scripts"))', text)
+        self.assertIn("self.cpp_info.bindirs = []", text)
+
     def test_pkg_config_and_vendored_prefix(self):
         spec = ros_pkgxml.RecipeSpec(
             name="theora_image_transport",

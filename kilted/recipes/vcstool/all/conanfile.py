@@ -49,3 +49,5 @@ class RosPipPackageConan(ConanFile):
         for env in (self.buildenv_info, self.runenv_info):
             for site in site_packages:
                 env.prepend_path("PYTHONPATH", site)
+            env.prepend_path("PATH", os.path.join(pkg, "bin"))
+            env.prepend_path("PATH", os.path.join(pkg, "Scripts"))

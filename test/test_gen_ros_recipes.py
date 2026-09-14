@@ -151,6 +151,16 @@ class ExtraPackagesTest(unittest.TestCase):
                 (Path(tmp) / "recipes" / "orocos_kdl" / "all" / "conanfile.py").is_file()
             )
 
+    def test_pip_package_console_scripts_flag(self):
+        plain = gen_ros_recipes.PipPackage.parse("vcstool/0.3.0")
+        self.assertFalse(plain.console_scripts)
+        flagged = gen_ros_recipes.PipPackage.parse(
+            {"ref": "vcstool/0.3.0", "console_scripts": True}
+        )
+        self.assertTrue(flagged.console_scripts)
+        spec = gen_ros_recipes._pip_package_spec(flagged, "ros-kilted")
+        self.assertTrue(spec.console_scripts)
+
     def test_qualify_ref_only_rewrites_index_packages(self):
         self.assertEqual(
             gen_ros_recipes._qualify_ref("orocos_kdl/1.5.1", "ros-kilted", {"orocos_kdl"}),

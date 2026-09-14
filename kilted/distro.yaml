@@ -151,7 +151,12 @@ pip_packages:
   python3-lark-parser: lark/1.2.2
   python3-argcomplete: argcomplete/3.6.2
   python3-pytest: pytest/8.3.4
-  python3-vcstool: vcstool/0.3.0
+  # ament_vendor() calls find_program(vcs). Without Scripts/bin on PATH the vendor
+  # packages that actually clone (gz_*) fail at configure, which is why this one
+  # is not treated as a PYTHONPATH-only module.
+  python3-vcstool:
+    ref: vcstool/0.3.0
+    console_scripts: true
   # Conan references are lowercase; PyPI resolves the normalised name just the same.
   python3-yaml: pyyaml/6.0.2
   python3-typing-extensions: typing_extensions/4.12.2

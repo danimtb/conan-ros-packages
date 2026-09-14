@@ -60,12 +60,17 @@ class PipPackage:
 
     ref: str
     pure: bool = True
+    console_scripts: bool = False
 
     @classmethod
     def parse(cls, value) -> "PipPackage":
         if isinstance(value, str):
             return cls(ref=value)
-        return cls(ref=value["ref"], pure=bool(value.get("pure", True)))
+        return cls(
+            ref=value["ref"],
+            pure=bool(value.get("pure", True)),
+            console_scripts=bool(value.get("console_scripts", False)),
+        )
 
 
 @dataclass
@@ -276,6 +281,7 @@ def _pip_package_spec(package: PipPackage, user: str) -> "ros_pkgxml.RecipeSpec"
         header=GENERATED_HEADER,
         arch_independent=package.pure,
         python_extension=not package.pure,
+        console_scripts=package.console_scripts,
     )
 
 
