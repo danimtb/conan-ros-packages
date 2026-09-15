@@ -6,3 +6,4 @@ rclcpp/29.5.8@ros-kilted
 CMakeDeps
 CMakeToolchain
 ROSEnv
+VCVars

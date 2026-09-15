@@ -10,7 +10,9 @@ as a local recipes index and uses `profiles/ros`.
 
 On Windows, `conanrosenv.bat` cannot be used: `cmd.exe` truncates `PATH` at 8191
 characters, which this graph exceeds (`The input line is too long`). The script
-writes the same wrapper as a `.ps1` over Conan's PowerShell env files.
+writes the same wrapper as a `.ps1` over Conan's PowerShell env files, and
+`VCVars` is listed so colcon sees `VisualStudioVersion` (CMakeToolchain does not
+emit it for the Visual Studio generator).
 
 ```bash
 python run.py
