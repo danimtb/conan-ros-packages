@@ -9,24 +9,24 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 os.chdir(HERE)
 
-from examples_tools import PROFILE, PS_CONF, WINDOWS, add_remote, run  # noqa: E402
+from examples_tools import PROFILE, WINDOWS, add_remote, run  # noqa: E402
 
-run(f'"{sys.executable}" -m pip install -q colcon-common-extensions')
+# colcon is the workspace tool, not a ROS package in the kilted index.
+# PowerShell treats a leading quoted path as a string, not an invocation.
+python = f'& "{sys.executable}"' if WINDOWS else f'"{sys.executable}"'
+run(f"{python} -m pip install -q colcon-common-extensions")
+
 add_remote()
 
-run(f'conan install . --output-folder=.conan --profile:all "{PROFILE}" --build=missing {PS_CONF}')
-
-# colcon builds each package from its own directory, so the toolchain has to be
-# absolute. Forward slashes: CMake treats \ in -D values as escapes (D:\a\... on GHA).
-toolchain = (HERE / ".conan" / "conan_toolchain.cmake").as_posix()
+# No powershell conf: ROSEnv's conanrosenv.bat calls conanbuild.bat / conanrun.bat.
+run(f'conan install . --output-folder=.conan --profile:all "{PROFILE}" --build=missing')
 
 if WINDOWS:
-    run(rf'. .\.conan\conanbuild.ps1; . .\.conan\conanrun.ps1; '
-        rf'colcon build --symlink-install --cmake-args "-DCMAKE_TOOLCHAIN_FILE={toolchain}"')
-    run(r". .\.conan\conanrun.ps1; . .\install\setup.ps1; "
-        r".\install\consumer_node\lib\consumer_node\consumer_node.exe")
+    rosenv = r"call .\.conan\conanrosenv.bat"
+    run(rf'cmd /c "{rosenv} && colcon build --symlink-install"')
+    run(rf'cmd /c "{rosenv} && call .\install\setup.bat && '
+        r'.\install\consumer_node\lib\consumer_node\consumer_node.exe"')
 else:
-    run(f'. ./.conan/conanbuild.sh; . ./.conan/conanrun.sh; '
-        f'colcon build --symlink-install --cmake-args "-DCMAKE_TOOLCHAIN_FILE={toolchain}"')
-    run(". ./.conan/conanrun.sh; . ./install/setup.bash; "
+    run(". ./.conan/conanrosenv.sh; colcon build --symlink-install")
+    run(". ./.conan/conanrosenv.sh; . ./install/setup.bash; "
         "./install/consumer_node/lib/consumer_node/consumer_node")
