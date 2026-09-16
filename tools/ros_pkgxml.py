@@ -169,6 +169,28 @@ def looks_up_deps_with_pkg_config(build_type: str, read_text) -> bool:
     )
 
 
+_CONSOLE_SCRIPTS_RE = re.compile(
+    r"\[options\.entry_points\]|\[project\.scripts\]|console_scripts\s*[=:]",
+    re.IGNORECASE,
+)
+
+
+def installs_console_scripts(build_type: str, read_text) -> bool:
+    """True when the package installs an executable script onto PATH.
+
+    VirtualRunEnv does not need those directories for a C++ node, and prepending
+    bin/ and Scripts/ for every pure-python package is what fills the Windows PATH
+    budget before the DLLs that do matter. Only packages that declare console
+    scripts keep those entries.
+    """
+    if build_type not in PYTHON_BUILD_TYPES:
+        return False
+    return any(
+        _CONSOLE_SCRIPTS_RE.search(read_text(name))
+        for name in ("setup.cfg", "setup.py", "pyproject.toml")
+    )
+
+
 def embeds_python_extension(build_type: str, read_text) -> bool:
     """True when the package installs an extension module.
 
@@ -300,6 +322,8 @@ class RecipeSpec:
     vendored_prefix: bool = False
     # The package calls pkg_check_modules(), which needs .pc files, not CMake configs.
     pkg_config: bool = False
+    # setuptools/pyproject declares console_scripts (or equivalent) that belong on PATH.
+    console_scripts: bool = False
     # CMake cache variable -> python expression, emitted verbatim into generate().
     cmake_variables: dict = field(default_factory=dict)
     # Dependency name -> the CMake target name this package expects it to have.
@@ -520,14 +544,59 @@ class RosPipPackageConan(ConanFile):
         self.cpp_info.set_property("cmake_find_mode", "none")
         self.cpp_info.includedirs = []
         self.cpp_info.libdirs = []
-        pkg = self.package_folder
+{_runtime_bindirs_block(spec)}        pkg = self.package_folder
 {SITE_PACKAGES_SNIPPET}
         for env in (self.buildenv_info, self.runenv_info):
             for site in site_packages:
                 env.prepend_path("PYTHONPATH", site)
-            env.prepend_path("PATH", os.path.join(pkg, "bin"))
-            env.prepend_path("PATH", os.path.join(pkg, "Scripts"))
-'''
+{_python_path_block(spec)}'''
+
+
+def _package_type_block(spec: RecipeSpec) -> str:
+    """Shared ament libraries must enter VirtualRunEnv for every consumer.
+
+    conanfile.txt cannot set run=True. Without package_type, a node that links
+    rclcpp.dll does not get rclcpp/bin on PATH and dies with STATUS_DLL_NOT_FOUND.
+    """
+    if spec.build_type in CMAKE_BUILD_TYPES and not spec.arch_independent:
+        return '    package_type = "shared-library"\n'
+    return ""
+
+
+def _python_path_block(spec: RecipeSpec) -> str:
+    """PATH entries for console scripts, or nothing.
+
+    bindirs is already empty for these packages. Adding bin/ and Scripts/ for
+    every pip or ament_python prefix is what filled PATH on Windows before the
+    native runtime directories.
+    """
+    if not spec.console_scripts:
+        return ""
+    return (
+        '            env.prepend_path("PATH", os.path.join(pkg, "bin"))\n'
+        '            env.prepend_path("PATH", os.path.join(pkg, "Scripts"))\n'
+    )
+
+
+def _runtime_bindirs_block(spec: RecipeSpec) -> str:
+    """What VirtualRunEnv should put on PATH, decided from the package sources.
+
+    The default bindirs is ['bin']. That is wrong in both directions here: ament
+    installs MODULE/SHARED plugins under lib on Windows, and most ROS packages
+    install no native library at all. Empty bindirs still become PATH entries and
+    blow the 8191-character Windows cap before the DLLs that do exist are visible.
+    """
+    if spec.arch_independent or spec.build_type in PYTHON_BUILD_TYPES or spec.build_type == PIP:
+        return (
+            "        # No native runtime library: do not spend PATH on an empty bin/.\n"
+            "        self.cpp_info.bindirs = []\n"
+        )
+    if spec.build_type in CMAKE_BUILD_TYPES:
+        return (
+            "        # ament on Windows installs RUNTIME (exe and DLL) under bin/.\n"
+            "        self.cpp_info.bindirs = [\"bin\"]\n"
+        )
+    return ""
 
 
 def _shared_option_block(spec: RecipeSpec) -> str:
@@ -706,8 +775,13 @@ def _render_cmake_recipe(spec: RecipeSpec) -> str:
     base_imports = [
         "from conan import ConanFile",
         "from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout",
-        "from conan.tools.microsoft import VCVars",
     ]
+    if not spec.arch_independent:
+        # vcvarsall.bat rewrites PATH to several KB of VS dirs. A variant like ros_core
+        # then prepends every dependency bindir; the combined PATH exceeds the Windows
+        # 8191-char cap, `set PATH=` fails, and cmake.exe is gone. These packages are
+        # project(NONE) and never invoke cl.exe, so the generator does not need that env.
+        base_imports.append("from conan.tools.microsoft import VCVars")
     if spec.pkg_config:
         base_imports.append("from conan.tools.gnu import PkgConfigDeps")
     imports = _imports_block(spec, base_imports)
@@ -746,6 +820,8 @@ def _render_cmake_recipe(spec: RecipeSpec) -> str:
         for name, expression in spec.cmake_variables.items()
     ]
     toolchain.append("        tc.generate()")
+    if not spec.arch_independent:
+        toolchain.append("        VCVars(self).generate()")
     toolchain = "\n".join(toolchain)
     return f'''{spec.header}
 import glob
@@ -762,14 +838,13 @@ class RosPackageConan(ConanFile):
     user = "{spec.user}"
     license = {spec.license!r}
     settings = "os", "compiler", "build_type", "arch"
-{_python_version_block(spec)}{sources}
+{_package_type_block(spec)}{_python_version_block(spec)}{sources}
     def layout(self):
 {layout}
 {_package_id_block(spec)}{_requirements_block(spec.requires)}{_build_requirements_block(spec.tool_requires)}{_source_block(spec)}
     def generate(self):
 {_pyenv_block(spec.pip_requires)}{_cmake_deps_block(spec)}
 {toolchain}
-        VCVars(self).generate()
 
     def build(self):
         cmake = CMake(self)
@@ -783,7 +858,7 @@ class RosPackageConan(ConanFile):
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "none")
         pkg = self.package_folder
-{builddirs_block}
+{_runtime_bindirs_block(spec)}{builddirs_block}
 {SITE_PACKAGES_SNIPPET}
         # Not in buildenv: CMakeToolchain already puts every dependency's builddirs in
         # CMAKE_PREFIX_PATH inside conan_toolchain.cmake, a file with no length limit,
@@ -861,13 +936,11 @@ class RosPackageConan(ConanFile):
         self.cpp_info.set_property("cmake_find_mode", "none")
         self.cpp_info.includedirs = []
         self.cpp_info.libdirs = []
-        pkg = self.package_folder
+{_runtime_bindirs_block(spec)}        pkg = self.package_folder
 {SITE_PACKAGES_SNIPPET}
         for env in (self.buildenv_info, self.runenv_info):
 {env_lines}            for site in site_packages:
                 env.prepend_path("PYTHONPATH", site)
-            env.prepend_path("PATH", os.path.join(pkg, "bin"))
-            env.prepend_path("PATH", os.path.join(pkg, "Scripts"))
-'''
+{_python_path_block(spec)}'''
 
 

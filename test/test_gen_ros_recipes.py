@@ -124,6 +124,10 @@ class ExtraPackagesTest(unittest.TestCase):
         pykdl = extras["python_orocos_kdl"]["src"] / "all" / "conanfile.py"
         self.assertIn('user = "ros-kilted"', pykdl.read_text(encoding="utf-8"))
         self.assertIn("orocos_kdl/1.5.1@ros-kilted", pykdl.read_text(encoding="utf-8"))
+        rosdep_map = gen_ros_recipes.RosDepMap.load(config.rosdep_map_path)
+        self.assertIn("python_orocos_kdl", rosdep_map.run_requires)
+        self.assertIn("openssl", rosdep_map.run_requires)
+        self.assertIn("tinyxml2", rosdep_map.run_requires)
 
     def test_copy_extra_replaces_generated_recipe_dir(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -146,6 +150,16 @@ class ExtraPackagesTest(unittest.TestCase):
             self.assertTrue(
                 (Path(tmp) / "recipes" / "orocos_kdl" / "all" / "conanfile.py").is_file()
             )
+
+    def test_pip_package_console_scripts_flag(self):
+        plain = gen_ros_recipes.PipPackage.parse("vcstool/0.3.0")
+        self.assertFalse(plain.console_scripts)
+        flagged = gen_ros_recipes.PipPackage.parse(
+            {"ref": "vcstool/0.3.0", "console_scripts": True}
+        )
+        self.assertTrue(flagged.console_scripts)
+        spec = gen_ros_recipes._pip_package_spec(flagged, "ros-kilted")
+        self.assertTrue(spec.console_scripts)
 
     def test_qualify_ref_only_rewrites_index_packages(self):
         self.assertEqual(

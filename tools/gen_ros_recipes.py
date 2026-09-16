@@ -60,12 +60,17 @@ class PipPackage:
 
     ref: str
     pure: bool = True
+    console_scripts: bool = False
 
     @classmethod
     def parse(cls, value) -> "PipPackage":
         if isinstance(value, str):
             return cls(ref=value)
-        return cls(ref=value["ref"], pure=bool(value.get("pure", True)))
+        return cls(
+            ref=value["ref"],
+            pure=bool(value.get("pure", True)),
+            console_scripts=bool(value.get("console_scripts", False)),
+        )
 
 
 @dataclass
@@ -82,6 +87,7 @@ class RosDepMap:
     cmake_target_names: dict
     dep_options: dict
     propagate_python_version: list
+    run_requires: list
     patches: dict
     path: Path
 
@@ -107,6 +113,7 @@ class RosDepMap:
             cmake_target_names=data.get("cmake_target_names") or {},
             dep_options=data.get("dep_options") or {},
             propagate_python_version=data.get("propagate_python_version") or [],
+            run_requires=data.get("run_requires") or [],
             patches=data.get("patches") or {},
         )
 
@@ -274,6 +281,7 @@ def _pip_package_spec(package: PipPackage, user: str) -> "ros_pkgxml.RecipeSpec"
         header=GENERATED_HEADER,
         arch_independent=package.pure,
         python_extension=not package.pure,
+        console_scripts=package.console_scripts,
     )
 
 
@@ -452,6 +460,7 @@ def generate(
                     ros_pkgxml.RecipeRequire(
                         _qualify_ref(value, user, extra_names),
                         options=_dep_options(value, rosdep_map),
+                        run=value.split("/", 1)[0] in rosdep_map.run_requires,
                     )
                 )
             elif section == "tool_requires":
@@ -475,6 +484,7 @@ def generate(
                 ros_pkgxml.RecipeRequire(
                     _qualify_ref(ref, user, extra_names),
                     options=_dep_options(ref, rosdep_map),
+                    run=ref.split("/", 1)[0] in rosdep_map.run_requires,
                 )
             )
 
@@ -499,6 +509,7 @@ def generate(
         python_extension = ros_pkgxml.embeds_python_extension(manifest.build_type, read_root)
         vendored_prefix = ros_pkgxml.installs_vendored_prefix(manifest.build_type, read_root)
         pkg_config = ros_pkgxml.looks_up_deps_with_pkg_config(manifest.build_type, read_root)
+        console_scripts = ros_pkgxml.installs_console_scripts(manifest.build_type, read_root)
         conan_version = versions[package]
         if manifest.version != conan_version:
             print(
@@ -520,6 +531,7 @@ def generate(
             python_extension=python_extension,
             vendored_prefix=vendored_prefix,
             pkg_config=pkg_config,
+            console_scripts=console_scripts,
             cmake_variables={
                 name: _cmake_variable(value)
                 for name, value in (rosdep_map.cmake_variables.get(package) or {}).items()
@@ -539,6 +551,7 @@ def generate(
             "python_extension": python_extension,
             "vendored_prefix": vendored_prefix,
             "pkg_config": pkg_config,
+            "console_scripts": console_scripts,
             "ros_requires": len([r for r in requires if r.ref.endswith(f"@{user}")]),
             "tool_requires": tool_requires,
             "pip_requires": pip_requires,

@@ -4,7 +4,7 @@ import os
 import sys
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
-from conan.tools.files import get
+from conan.tools.files import get, replace_in_file
 from conan.tools.microsoft import VCVars
 
 
@@ -16,6 +16,7 @@ class RosPackageConan(ConanFile):
     user = "ros-kilted"
     license = 'Apache License 2.0'
     settings = "os", "compiler", "build_type", "arch"
+    package_type = "shared-library"
 
     def layout(self):
         cmake_layout(self, src_folder="src")
@@ -37,12 +38,14 @@ class RosPackageConan(ConanFile):
             "boost/1.83.0",
             transitive_headers=True,
             transitive_libs=True,
+            run=True,
             options={"without_python": "False"},
         )
         self.requires(
             "opencv/4.12.0",
             transitive_headers=True,
             transitive_libs=True,
+            run=True,
             options={"aruco": "True"},
         )
         self.requires(
@@ -84,6 +87,12 @@ class RosPackageConan(ConanFile):
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'CMakeLists.txt'),
+            '  find_package(Python3 REQUIRED COMPONENTS Development NumPy)\n  find_package(Boost QUIET)\n  if(Boost_VERSION_STRING VERSION_LESS "1.67")\n    # This is a bit of a hack to suppress a warning\n    #   No header defined for python3; skipping header check\n    # Which should only affect Boost versions < 1.67\n    # Resolution for newer versions:\n    #  https://gitlab.kitware.com/cmake/cmake/issues/16391\n    set(_Boost_PYTHON3_HEADERS "boost/python.hpp")\n    find_package(Boost REQUIRED COMPONENTS python3)\n    set(boost_python_target "Boost::python3")\n  else()\n    find_package(Boost REQUIRED COMPONENTS python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR})\n    set(boost_python_target "Boost::python${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}")\n  endif()',
+            '  find_package(Python3 REQUIRED COMPONENTS Development NumPy)\n  find_package(Boost REQUIRED CONFIG COMPONENTS python)\n  set(boost_python_target "Boost::python")',
+        )
 
     def generate(self):
         CMakeDeps(self).generate()
@@ -112,6 +121,8 @@ class RosPackageConan(ConanFile):
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "none")
         pkg = self.package_folder
+        # ament on Windows installs RUNTIME (exe and DLL) under bin/.
+        self.cpp_info.bindirs = ["bin"]
         self.cpp_info.builddirs.append(pkg)
         self.cpp_info.builddirs.append(os.path.join(pkg, "share", self.name, "cmake"))
         site_packages = [os.path.join(pkg, "Lib", "site-packages")] + sorted(

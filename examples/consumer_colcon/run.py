@@ -11,21 +11,31 @@ os.chdir(HERE)
 
 from examples_tools import PROFILE, PS_CONF, WINDOWS, add_remote, run  # noqa: E402
 
-run(f'"{sys.executable}" -m pip install -q colcon-common-extensions')
+# colcon is the workspace tool, not a ROS package in the kilted index.
+# PowerShell treats a leading quoted path as a string, not an invocation.
+python = f'& "{sys.executable}"' if WINDOWS else f'"{sys.executable}"'
+run(f"{python} -m pip install -q colcon-common-extensions")
+
 add_remote()
 
 run(f'conan install . --output-folder=.conan --profile:all "{PROFILE}" --build=missing {PS_CONF}')
 
-# colcon builds each package from its own directory, so the toolchain has to be absolute.
-toolchain = HERE / ".conan" / "conan_toolchain.cmake"
-
 if WINDOWS:
-    run(rf'. .\.conan\conanbuild.ps1; . .\.conan\conanrun.ps1; '
-        rf'colcon build --symlink-install --cmake-args "-DCMAKE_TOOLCHAIN_FILE={toolchain}"')
-    run(r". .\.conan\conanrun.ps1; . .\install\setup.ps1; "
+    # ROSEnv only emits conanrosenv.bat, which hits cmd's 8191-character PATH cap.
+    # Same wrapper as the .bat, using the PowerShell env scripts Conan already wrote.
+    toolchain = (HERE / ".conan" / "conan_toolchain.cmake").as_posix()
+    (HERE / ".conan" / "conanrosenv.ps1").write_text(
+        f'$env:CMAKE_TOOLCHAIN_FILE = "{toolchain}"\n'
+        '$env:CMAKE_BUILD_TYPE = "Release"\n'
+        '. "$PSScriptRoot\\conanbuild.ps1"\n'
+        '. "$PSScriptRoot\\conanrun.ps1"\n',
+        encoding="utf-8",
+        newline="\n",
+    )
+    run(r". .\.conan\conanrosenv.ps1; colcon build --symlink-install")
+    run(r". .\.conan\conanrosenv.ps1; . .\install\setup.ps1; "
         r".\install\consumer_node\lib\consumer_node\consumer_node.exe")
 else:
-    run(f'. ./.conan/conanbuild.sh; . ./.conan/conanrun.sh; '
-        f'colcon build --symlink-install --cmake-args "-DCMAKE_TOOLCHAIN_FILE={toolchain}"')
-    run(". ./.conan/conanrun.sh; . ./install/setup.bash; "
+    run(". ./.conan/conanrosenv.sh; colcon build --symlink-install")
+    run(". ./.conan/conanrosenv.sh; . ./install/setup.bash; "
         "./install/consumer_node/lib/consumer_node/consumer_node")

@@ -16,6 +16,7 @@ class RosPackageConan(ConanFile):
     user = "ros-kilted"
     license = 'MIT'
     settings = "os", "compiler", "build_type", "arch"
+    package_type = "shared-library"
 
     def layout(self):
         cmake_layout(self, src_folder="src")
@@ -37,6 +38,7 @@ class RosPackageConan(ConanFile):
             "sqlite3/3.45.2",
             transitive_headers=True,
             transitive_libs=True,
+            run=True,
         )
         self.requires(
             "zeromq/4.3.5",
@@ -59,6 +61,7 @@ class RosPackageConan(ConanFile):
             "tinyxml2/10.0.0",
             transitive_headers=True,
             transitive_libs=True,
+            run=True,
         )
         self.requires(
             "tinyxml2_vendor/0.10.1@ros-kilted",
@@ -109,6 +112,8 @@ class RosPackageConan(ConanFile):
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "none")
         pkg = self.package_folder
+        # ament on Windows installs RUNTIME (exe and DLL) under bin/.
+        self.cpp_info.bindirs = ["bin"]
         self.cpp_info.builddirs.append(pkg)
         self.cpp_info.builddirs.append(os.path.join(pkg, "share", self.name, "cmake"))
         site_packages = [os.path.join(pkg, "Lib", "site-packages")] + sorted(

@@ -31,6 +31,7 @@ class PythonOrocosKdlConan(ConanFile):
             "orocos_kdl/1.5.1@ros-kilted",
             transitive_headers=True,
             transitive_libs=True,
+            run=True,
         )
         self.requires(
             "pybind11/2.11.1",
@@ -46,6 +47,7 @@ class PythonOrocosKdlConan(ConanFile):
             "boost/1.83.0",
             transitive_headers=True,
             transitive_libs=True,
+            options={"without_python": False},
         )
 
     def source(self):
@@ -82,7 +84,9 @@ class PythonOrocosKdlConan(ConanFile):
         self.cpp_info.set_property("cmake_target_name", "python_orocos_kdl::python_orocos_kdl")
         pkg = self.package_folder
         site_packages = [os.path.join(pkg, "Lib", "site-packages")] + sorted(
-            glob.glob(os.path.join(pkg, "lib", "python*", "site-packages")))
+            glob.glob(os.path.join(pkg, "lib", "python*", "site-packages"))
+            + glob.glob(os.path.join(pkg, "lib", "python*", "dist-packages"))
+        )
         def _prepend_pythonpath(path):
             if os.path.isdir(path):
                 self.runenv_info.prepend_path("PYTHONPATH", path)
