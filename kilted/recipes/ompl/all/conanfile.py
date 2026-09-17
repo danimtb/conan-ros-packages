@@ -59,6 +59,9 @@ class RosPackageConan(ConanFile):
         tc.variables["Python3_ROOT_DIR"] = python_root
         tc.variables["Python_EXECUTABLE"] = python
         tc.variables["Python_ROOT_DIR"] = python_root
+        tc.variables["OMPL_BUILD_DEMOS"] = 'OFF'
+        tc.variables["OMPL_BUILD_TESTS"] = 'OFF'
+        tc.variables["OMPL_REGISTRATION"] = 'OFF'
         tc.generate()
         VCVars(self).generate()
 

@@ -315,6 +315,14 @@ cmake_variables:
   # successful so ament_package() is the only work left.
   python_orocos_kdl_vendor:
     pykdl_FOUND: literal:ON
+  # Demos and tests compile Boost.Program_options with BOOST_PROGRAM_OPTIONS_DYN_LINK
+  # on MSVC, while ConanCenter Boost is a static libboost_program_options.lib. The
+  # library itself does not use program_options; nav2_smac_planner only links ompl.
+  # Registration opens a browser during configure, which is noise in CI.
+  ompl:
+    OMPL_BUILD_DEMOS: literal:OFF
+    OMPL_BUILD_TESTS: literal:OFF
+    OMPL_REGISTRATION: literal:OFF
 
 # CMake target renames for dependencies. Same root cause as the block above, seen from the
 # other side: a vendor package ships a Find<X>.cmake declaring one target name, and once the
