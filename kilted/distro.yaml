@@ -488,6 +488,43 @@ patches:
         link_directories(${PC_OGG_LIBRARY_DIRS} ${PC_THEORA_LIBRARY_DIRS}
           ${PC_THEORAENC_LIBRARY_DIRS} ${PC_THEORADEC_LIBRARY_DIRS})
 
+  # sched_setscheduler / SCHED_FIFO are POSIX. Linux headers make this compile;
+  # MSVC does not have them. RoboStack and navigation2#5333 throw on Windows
+  # and macOS instead of calling a Linux-only API.
+  nav2_util:
+    - file: src/node_utils.cpp
+      search: |-
+        void setSoftRealTimePriority()
+        {
+          sched_param sch;
+          sch.sched_priority = 49;
+          if (sched_setscheduler(0, SCHED_FIFO, &sch) == -1) {
+            std::string errmsg(
+              "Cannot set as real-time thread. Users must set: <username> hard rtprio 99 and "
+              "<username> soft rtprio 99 in /etc/security/limits.conf to enable "
+              "realtime prioritization! Error: ");
+            throw std::runtime_error(errmsg + std::strerror(errno));
+          }
+        }
+      replace: |-
+        void setSoftRealTimePriority()
+        {
+        #if defined(__APPLE__) || defined(_WIN32)
+          throw std::runtime_error(
+            "Setting priority as real-time thread is currently only supported on Linux.");
+        #else
+          sched_param sch;
+          sch.sched_priority = 49;
+          if (sched_setscheduler(0, SCHED_FIFO, &sch) == -1) {
+            std::string errmsg(
+              "Cannot set as real-time thread. Users must set: <username> hard rtprio 99 and "
+              "<username> soft rtprio 99 in /etc/security/limits.conf to enable "
+              "realtime prioritization! Error: ");
+            throw std::runtime_error(errmsg + std::strerror(errno));
+          }
+        #endif
+        }
+
   ament_cmake_vendor_package:
     - file: cmake/ament_vendor.cmake
       search: |-

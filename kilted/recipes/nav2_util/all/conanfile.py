@@ -4,7 +4,7 @@ import os
 import sys
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
-from conan.tools.files import get
+from conan.tools.files import get, replace_in_file
 from conan.tools.microsoft import VCVars
 
 
@@ -147,6 +147,12 @@ class RosPackageConan(ConanFile):
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'src/node_utils.cpp'),
+            'void setSoftRealTimePriority()\n{\n  sched_param sch;\n  sch.sched_priority = 49;\n  if (sched_setscheduler(0, SCHED_FIFO, &sch) == -1) {\n    std::string errmsg(\n      "Cannot set as real-time thread. Users must set: <username> hard rtprio 99 and "\n      "<username> soft rtprio 99 in /etc/security/limits.conf to enable "\n      "realtime prioritization! Error: ");\n    throw std::runtime_error(errmsg + std::strerror(errno));\n  }\n}',
+            'void setSoftRealTimePriority()\n{\n#if defined(__APPLE__) || defined(_WIN32)\n  throw std::runtime_error(\n    "Setting priority as real-time thread is currently only supported on Linux.");\n#else\n  sched_param sch;\n  sch.sched_priority = 49;\n  if (sched_setscheduler(0, SCHED_FIFO, &sch) == -1) {\n    std::string errmsg(\n      "Cannot set as real-time thread. Users must set: <username> hard rtprio 99 and "\n      "<username> soft rtprio 99 in /etc/security/limits.conf to enable "\n      "realtime prioritization! Error: ");\n    throw std::runtime_error(errmsg + std::strerror(errno));\n  }\n#endif\n}',
+        )
 
     def generate(self):
         CMakeDeps(self).generate()
