@@ -4,7 +4,7 @@ import os
 import sys
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
-from conan.tools.files import get
+from conan.tools.files import get, replace_in_file
 from conan.tools.microsoft import VCVars
 
 
@@ -175,6 +175,18 @@ class RosPackageConan(ConanFile):
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'CMakeLists.txt'),
+            '# Geographiclib installs FindGeographicLib.cmake to this non-standard location\nset(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/share/cmake/geographiclib/")\nfind_package(GeographicLib REQUIRED)',
+            'find_package(geographiclib REQUIRED CONFIG)',
+        )
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'CMakeLists.txt'),
+            '${GeographicLib_LIBRARIES}',
+            'GeographicLib::GeographicLib',
+        )
 
     def generate(self):
         CMakeDeps(self).generate()

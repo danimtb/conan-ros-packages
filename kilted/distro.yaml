@@ -488,6 +488,22 @@ patches:
         link_directories(${PC_OGG_LIBRARY_DIRS} ${PC_THEORA_LIBRARY_DIRS}
           ${PC_THEORAENC_LIBRARY_DIRS} ${PC_THEORADEC_LIBRARY_DIRS})
 
+  # Debian's FindGeographicLib.cmake sets GeographicLib_LIBRARIES and the headers
+  # live on the compiler's default include path, so linking the variable is enough.
+  # CMakeDeps answers find_package(GeographicLib) with geographiclib-config.cmake,
+  # which only declares GeographicLib::GeographicLib (and geographiclib_LIBRARIES).
+  # ${GeographicLib_LIBRARIES} is empty, so Geocentric.hpp is never on the include path.
+  robot_localization:
+    - file: CMakeLists.txt
+      search: |-
+        # Geographiclib installs FindGeographicLib.cmake to this non-standard location
+        set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/share/cmake/geographiclib/")
+        find_package(GeographicLib REQUIRED)
+      replace: find_package(geographiclib REQUIRED CONFIG)
+    - file: CMakeLists.txt
+      search: "${GeographicLib_LIBRARIES}"
+      replace: GeographicLib::GeographicLib
+
   # sched_setscheduler / SCHED_FIFO are POSIX. Linux headers make this compile;
   # MSVC does not have them. RoboStack and navigation2#5333 throw on Windows
   # and macOS instead of calling a Linux-only API.
