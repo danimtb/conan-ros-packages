@@ -301,6 +301,10 @@ cmake_variables:
   # than on the symbols.
   laser_filters:
     CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS: literal:ON
+  # rl_lib is a shared library with no visibility macros; MSVC then writes the DLL
+  # but no import library, and ekf_node/ukf_node fail to open Release/rl_lib.lib.
+  robot_localization:
+    CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS: literal:ON
   # Groot, the CLI tools and the tutorials are optional; the library is what nav2 links.
   behaviortree_cpp:
     BTCPP_EXAMPLES: literal:OFF
@@ -493,6 +497,8 @@ patches:
   # CMakeDeps answers find_package(GeographicLib) with geographiclib-config.cmake,
   # which only declares GeographicLib::GeographicLib (and geographiclib_LIBRARIES).
   # ${GeographicLib_LIBRARIES} is empty, so Geocentric.hpp is never on the include path.
+  # navsat_transform.hpp includes that header, so the target must be PUBLIC or the
+  # node executables compile the same include without GeographicLib's include dirs.
   robot_localization:
     - file: CMakeLists.txt
       search: |-
@@ -501,8 +507,18 @@ patches:
         find_package(GeographicLib REQUIRED)
       replace: find_package(geographiclib REQUIRED CONFIG)
     - file: CMakeLists.txt
-      search: "${GeographicLib_LIBRARIES}"
-      replace: GeographicLib::GeographicLib
+      search: |-
+        target_link_libraries(${library_name} PRIVATE
+          ${GeographicLib_LIBRARIES}
+          yaml-cpp::yaml-cpp
+        )
+      replace: |-
+        target_link_libraries(${library_name} PRIVATE
+          yaml-cpp::yaml-cpp
+        )
+        target_link_libraries(${library_name} PUBLIC
+          GeographicLib::GeographicLib
+        )
 
   # sched_setscheduler / SCHED_FIFO are POSIX. Linux headers make this compile;
   # MSVC does not have them. RoboStack and navigation2#5333 throw on Windows

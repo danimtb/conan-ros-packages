@@ -184,8 +184,8 @@ class RosPackageConan(ConanFile):
         replace_in_file(
             self,
             os.path.join(self.source_folder, 'CMakeLists.txt'),
-            '${GeographicLib_LIBRARIES}',
-            'GeographicLib::GeographicLib',
+            'target_link_libraries(${library_name} PRIVATE\n  ${GeographicLib_LIBRARIES}\n  yaml-cpp::yaml-cpp\n)',
+            'target_link_libraries(${library_name} PRIVATE\n  yaml-cpp::yaml-cpp\n)\ntarget_link_libraries(${library_name} PUBLIC\n  GeographicLib::GeographicLib\n)',
         )
 
     def generate(self):
@@ -200,6 +200,7 @@ class RosPackageConan(ConanFile):
         tc.variables["Python3_ROOT_DIR"] = python_root
         tc.variables["Python_EXECUTABLE"] = python
         tc.variables["Python_ROOT_DIR"] = python_root
+        tc.variables["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = 'ON'
         tc.generate()
         VCVars(self).generate()
 
