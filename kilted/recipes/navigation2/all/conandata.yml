@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/navigation2/1.4.2-1.tar.gz
+    sha256: b81f132f3aaee3599da1a5591268dbccd978e97a7b027ce79c495fa3d4198f04

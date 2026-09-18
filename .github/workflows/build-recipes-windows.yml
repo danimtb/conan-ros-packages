@@ -60,7 +60,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install conan pyyaml
           New-Item -ItemType Directory -Force -Path $env:CONAN_HOME | Out-Null
-          conan profile detect
+          conan profile detect --force
 
       - name: Check generated recipes
         run: |

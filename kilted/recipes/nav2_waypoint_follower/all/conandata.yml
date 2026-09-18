@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_waypoint_follower/1.4.2-1.tar.gz
+    sha256: 3a1df2e1e3478d329c60260b5b9889a86a1ed591ad86de0f9c41c48a00de5721

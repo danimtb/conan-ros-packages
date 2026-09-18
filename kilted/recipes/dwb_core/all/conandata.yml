@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/dwb_core/1.4.2-1.tar.gz
+    sha256: 87e8283b6fe2e796b819bf9bb3390a55fa248035f5890d94029e0ebc71f894d5

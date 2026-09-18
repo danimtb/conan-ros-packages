@@ -8,7 +8,7 @@
 distro: kilted
 rosdistro_tag: kilted/2026-06-17
 conan_user: ros-kilted
-requested_packages: [desktop, perception]
+requested_packages: [desktop, perception, navigation2]
 
 packages:
   action_msgs: {version: 2.3.2, build_type: ament_cmake}
@@ -44,6 +44,10 @@ packages:
   ament_lint: {version: 0.19.3, build_type: ament_python}
   ament_package: {version: 0.17.3, build_type: ament_python}
   angles: {version: 1.16.1, build_type: ament_cmake}
+  backward_ros: {version: 1.0.8, build_type: cmake}
+  behaviortree_cpp: {version: 4.9.0, build_type: ament_cmake}
+  bond: {version: 4.3.0, build_type: ament_cmake}
+  bondcpp: {version: 4.3.0, build_type: ament_cmake}
   builtin_interfaces: {version: 2.3.2, build_type: ament_cmake}
   camera_calibration_parsers: {version: 6.1.4, build_type: ament_cmake}
   camera_info_manager: {version: 6.1.4, build_type: ament_cmake}
@@ -54,6 +58,7 @@ packages:
   compressed_depth_image_transport: {version: 5.1.2, build_type: ament_cmake}
   compressed_image_transport: {version: 5.1.2, build_type: ament_cmake}
   console_bridge_vendor: {version: 1.8.0, build_type: ament_cmake}
+  costmap_queue: {version: 1.4.2, build_type: ament_cmake}
   cv_bridge: {version: 4.1.0, build_type: ament_cmake}
   demo_nodes_cpp: {version: 0.36.5, build_type: ament_cmake}
   demo_nodes_cpp_native: {version: 0.36.5, build_type: ament_cmake}
@@ -66,6 +71,10 @@ packages:
   dummy_map_server: {version: 0.36.5, build_type: ament_cmake}
   dummy_robot_bringup: {version: 0.36.5, build_type: ament_cmake}
   dummy_sensors: {version: 0.36.5, build_type: ament_cmake}
+  dwb_core: {version: 1.4.2, build_type: ament_cmake}
+  dwb_critics: {version: 1.4.2, build_type: ament_cmake}
+  dwb_msgs: {version: 1.4.2, build_type: ament_cmake}
+  dwb_plugins: {version: 1.4.2, build_type: ament_cmake}
   eigen3_cmake_module: {version: 0.4.0, build_type: ament_cmake}
   example_interfaces: {version: 0.13.1, build_type: ament_cmake}
   examples_rclcpp_minimal_action_client: {version: 0.20.6, build_type: ament_cmake}
@@ -88,6 +97,7 @@ packages:
   fastdds: {version: 3.2.4, build_type: cmake}
   filters: {version: 2.2.2, build_type: ament_cmake}
   foonathan_memory_vendor: {version: 1.3.1, build_type: cmake}
+  geographic_msgs: {version: 1.0.6, build_type: ament_cmake}
   geometry2: {version: 0.41.7, build_type: ament_cmake}
   geometry_msgs: {version: 5.5.2, build_type: ament_cmake}
   gmock_vendor: {version: 1.15.1, build_type: cmake}
@@ -129,7 +139,43 @@ packages:
   map_msgs: {version: 2.5.0, build_type: ament_cmake}
   mcap_vendor: {version: 0.32.0, build_type: ament_cmake}
   message_filters: {version: 7.1.10, build_type: ament_cmake}
+  nav2_amcl: {version: 1.4.2, build_type: ament_cmake}
+  nav2_behavior_tree: {version: 1.4.2, build_type: ament_cmake}
+  nav2_behaviors: {version: 1.4.2, build_type: ament_cmake}
+  nav2_bt_navigator: {version: 1.4.2, build_type: ament_cmake}
+  nav2_collision_monitor: {version: 1.4.2, build_type: ament_cmake}
+  nav2_common: {version: 1.4.2, build_type: ament_cmake}
+  nav2_constrained_smoother: {version: 1.4.2, build_type: ament_cmake}
+  nav2_controller: {version: 1.4.2, build_type: ament_cmake}
+  nav2_core: {version: 1.4.2, build_type: ament_cmake}
+  nav2_costmap_2d: {version: 1.4.2, build_type: ament_cmake}
+  nav2_dwb_controller: {version: 1.4.2, build_type: ament_cmake}
+  nav2_graceful_controller: {version: 1.4.2, build_type: ament_cmake}
+  nav2_lifecycle_manager: {version: 1.4.2, build_type: ament_cmake}
+  nav2_mppi_controller: {version: 1.4.2, build_type: ament_cmake}
+  nav2_msgs: {version: 1.4.2, build_type: ament_cmake}
+  nav2_navfn_planner: {version: 1.4.2, build_type: ament_cmake}
+  nav2_planner: {version: 1.4.2, build_type: ament_cmake}
+  nav2_regulated_pure_pursuit_controller: {version: 1.4.2, build_type: ament_cmake}
+  nav2_rotation_shim_controller: {version: 1.4.2, build_type: ament_cmake}
+  nav2_route: {version: 1.4.2, build_type: ament_cmake}
+  nav2_rviz_plugins: {version: 1.4.2, build_type: ament_cmake}
+  nav2_simple_commander: {version: 1.4.2, build_type: ament_python}
+  nav2_smac_planner: {version: 1.4.2, build_type: ament_cmake}
+  nav2_smoother: {version: 1.4.2, build_type: ament_cmake}
+  nav2_theta_star_planner: {version: 1.4.2, build_type: ament_cmake}
+  nav2_util: {version: 1.4.2, build_type: ament_cmake}
+  nav2_velocity_smoother: {version: 1.4.2, build_type: ament_cmake}
+  nav2_voxel_grid: {version: 1.4.2, build_type: ament_cmake}
+  nav2_waypoint_follower: {version: 1.4.2, build_type: ament_cmake}
+  nav_2d_msgs: {version: 1.4.2, build_type: ament_cmake}
+  nav_2d_utils: {version: 1.4.2, build_type: ament_cmake}
   nav_msgs: {version: 5.5.2, build_type: ament_cmake}
+  navigation2: {version: 1.4.2, build_type: ament_cmake}
+  ompl: {version: 1.7.0, build_type: cmake}
+  opennav_docking: {version: 1.4.2, build_type: ament_cmake}
+  opennav_docking_bt: {version: 1.4.2, build_type: ament_cmake}
+  opennav_docking_core: {version: 1.4.2, build_type: ament_cmake}
   orocos_kdl_vendor: {version: 0.7.1, build_type: ament_cmake}
   osrf_pycommon: {version: 2.1.6, build_type: ament_python}
   pcl_conversions: {version: 2.8.0, build_type: ament_cmake}
@@ -169,6 +215,7 @@ packages:
   rmw_implementation: {version: 3.0.7, build_type: ament_cmake}
   rmw_implementation_cmake: {version: 7.8.2, build_type: ament_cmake}
   rmw_security_common: {version: 7.8.2, build_type: ament_cmake}
+  robot_localization: {version: 3.9.4, build_type: ament_cmake}
   robot_state_publisher: {version: 3.4.3, build_type: ament_cmake}
   ros2action: {version: 0.38.3, build_type: ament_python}
   ros2bag: {version: 0.32.0, build_type: ament_python}
@@ -241,6 +288,7 @@ packages:
   sensor_msgs_py: {version: 5.5.2, build_type: ament_python}
   service_msgs: {version: 2.3.2, build_type: ament_cmake}
   shape_msgs: {version: 5.5.2, build_type: ament_cmake}
+  smclib: {version: 4.3.0, build_type: ament_cmake}
   spdlog_vendor: {version: 1.7.0, build_type: ament_cmake}
   sqlite3_vendor: {version: 0.32.0, build_type: ament_cmake}
   statistics_msgs: {version: 2.3.2, build_type: ament_cmake}

@@ -1,0 +1,4 @@
+sources:
+  1.7.0:
+    url: https://github.com/ros2-gbp/ompl-release/archive/refs/tags/release/kilted/ompl/1.7.0-3.tar.gz
+    sha256: 27b2f208bf8711cdccb8a15ec781a64f15472005608b00e2e21e5c1d4b43a6aa

@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/opennav_docking_bt/1.4.2-1.tar.gz
+    sha256: bf2e9d2c98292f812845f335c81c4b91cd510dbba7838984cea7665aab34a355

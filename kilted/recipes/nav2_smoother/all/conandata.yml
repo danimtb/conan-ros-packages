@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_smoother/1.4.2-1.tar.gz
+    sha256: 90cbded8c49dd86ffc03e42aec9a5acb0a71b605057675523207b5034804b268

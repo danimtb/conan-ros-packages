@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_graceful_controller/1.4.2-1.tar.gz
+    sha256: 9680d3a2d88290b087b274c32b29ac3af3085f5d5c09c65ff426e1f12c838ffb
