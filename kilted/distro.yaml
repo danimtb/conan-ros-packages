@@ -557,6 +557,14 @@ patches:
         #endif
         }
 
+  # BT::Tree::sleep takes system_clock::duration. libstdc++ makes that nanoseconds,
+  # so the conversion is implicit; MSVC's system_clock is 100 ns ticks, and converting
+  # from nanoseconds is a truncation that needs duration_cast.
+  nav2_behavior_tree:
+    - file: include/nav2_behavior_tree/utils/loop_rate.hpp
+      search: "    tree_->sleep(time_to_sleep_ns);"
+      replace: "    tree_->sleep(std::chrono::duration_cast<std::chrono::system_clock::duration>(time_to_sleep_ns));"
+
   ament_cmake_vendor_package:
     - file: cmake/ament_vendor.cmake
       search: |-

@@ -4,7 +4,7 @@ import os
 import sys
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
-from conan.tools.files import get
+from conan.tools.files import get, replace_in_file
 from conan.tools.microsoft import VCVars
 
 
@@ -129,6 +129,12 @@ class RosPackageConan(ConanFile):
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'include/nav2_behavior_tree/utils/loop_rate.hpp'),
+            '    tree_->sleep(time_to_sleep_ns);',
+            '    tree_->sleep(std::chrono::duration_cast<std::chrono::system_clock::duration>(time_to_sleep_ns));',
+        )
 
     def generate(self):
         CMakeDeps(self).generate()
