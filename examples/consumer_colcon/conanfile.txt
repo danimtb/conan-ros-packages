@@ -1,6 +1,8 @@
 [requires]
-ament_cmake/2.7.5@ros-kilted
 rclcpp/29.5.8@ros-kilted
+
+[tool_requires]
+ament_cmake/2.7.5@ros-kilted
 
 [generators]
 CMakeDeps
