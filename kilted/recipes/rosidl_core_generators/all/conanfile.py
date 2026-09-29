@@ -27,78 +27,6 @@ class RosPackageConan(ConanFile):
 
     def requirements(self):
         self.requires(
-            "ament_cmake/2.7.5@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "ament_cmake_core/2.7.5@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_cmake/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_generator_c/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_generator_cpp/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_generator_py/0.24.2@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_typesupport_c/3.3.3@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_typesupport_cpp/3.3.3@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_typesupport_fastrtps_c/3.8.2@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_typesupport_fastrtps_cpp/3.8.2@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_typesupport_introspection_c/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_typesupport_introspection_cpp/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
             "catkin_pkg/1.1.0@ros-kilted",
             run=True,
         )
@@ -106,6 +34,20 @@ class RosPackageConan(ConanFile):
             "setuptools/75.8.0@ros-kilted",
             run=True,
         )
+
+    def build_requirements(self):
+        self.tool_requires("ament_cmake/2.7.5@ros-kilted")
+        self.tool_requires("ament_cmake_core/2.7.5@ros-kilted", visible=True)
+        self.tool_requires("rosidl_cmake/4.9.6@ros-kilted", visible=True)
+        self.tool_requires("rosidl_generator_c/4.9.6@ros-kilted", visible=True)
+        self.tool_requires("rosidl_generator_cpp/4.9.6@ros-kilted", visible=True)
+        self.tool_requires("rosidl_generator_py/0.24.2@ros-kilted", visible=True)
+        self.tool_requires("rosidl_typesupport_c/3.3.3@ros-kilted", visible=True)
+        self.tool_requires("rosidl_typesupport_cpp/3.3.3@ros-kilted", visible=True)
+        self.tool_requires("rosidl_typesupport_fastrtps_c/3.8.2@ros-kilted", visible=True)
+        self.tool_requires("rosidl_typesupport_fastrtps_cpp/3.8.2@ros-kilted", visible=True)
+        self.tool_requires("rosidl_typesupport_introspection_c/4.9.6@ros-kilted", visible=True)
+        self.tool_requires("rosidl_typesupport_introspection_cpp/4.9.6@ros-kilted", visible=True)
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)

@@ -23,60 +23,6 @@ class RosPackageConan(ConanFile):
 
     def requirements(self):
         self.requires(
-            "ament_cmake/2.7.5@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "ament_cmake_ros_core/0.14.7@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "ament_index_python/1.11.4@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_cli/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_cmake/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_generator_c/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_generator_cpp/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_parser/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "rosidl_pycommon/4.9.6@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
             "rosidl_runtime_c/4.9.6@ros-kilted",
             transitive_headers=True,
             transitive_libs=True,
@@ -108,6 +54,17 @@ class RosPackageConan(ConanFile):
             "setuptools/75.8.0@ros-kilted",
             run=True,
         )
+
+    def build_requirements(self):
+        self.tool_requires("ament_cmake/2.7.5@ros-kilted", visible=True)
+        self.tool_requires("ament_cmake_ros_core/0.14.7@ros-kilted")
+        self.tool_requires("ament_index_python/1.11.4@ros-kilted", visible=True)
+        self.tool_requires("rosidl_cli/4.9.6@ros-kilted", visible=True)
+        self.tool_requires("rosidl_cmake/4.9.6@ros-kilted", visible=True)
+        self.tool_requires("rosidl_generator_c/4.9.6@ros-kilted", visible=True)
+        self.tool_requires("rosidl_generator_cpp/4.9.6@ros-kilted", visible=True)
+        self.tool_requires("rosidl_parser/4.9.6@ros-kilted", visible=True)
+        self.tool_requires("rosidl_pycommon/4.9.6@ros-kilted", visible=True)
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)

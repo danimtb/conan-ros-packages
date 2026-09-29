@@ -26,10 +26,6 @@ class RosPackageConan(ConanFile):
 
     def requirements(self):
         self.requires(
-            "launch/3.8.7@ros-kilted",
-            run=True,
-        )
-        self.requires(
             "launch_ros/0.28.5@ros-kilted",
             run=True,
         )
@@ -45,6 +41,9 @@ class RosPackageConan(ConanFile):
             "setuptools/75.8.0@ros-kilted",
             run=True,
         )
+
+    def build_requirements(self):
+        self.tool_requires("launch/3.8.7@ros-kilted", visible=True)
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)

@@ -23,18 +23,6 @@ class RosPackageConan(ConanFile):
 
     def requirements(self):
         self.requires(
-            "ament_cmake_core/2.7.5@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "ament_package/0.17.3@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
             "catkin_pkg/1.1.0@ros-kilted",
             run=True,
         )
@@ -42,6 +30,10 @@ class RosPackageConan(ConanFile):
             "setuptools/75.8.0@ros-kilted",
             run=True,
         )
+
+    def build_requirements(self):
+        self.tool_requires("ament_cmake_core/2.7.5@ros-kilted", visible=True)
+        self.tool_requires("ament_package/0.17.3@ros-kilted")
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)

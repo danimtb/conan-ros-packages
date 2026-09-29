@@ -26,13 +26,12 @@ class RosPackageConan(ConanFile):
 
     def requirements(self):
         self.requires(
-            "ament_lint/0.19.3@ros-kilted",
-            run=True,
-        )
-        self.requires(
             "setuptools/75.8.0@ros-kilted",
             run=True,
         )
+
+    def build_requirements(self):
+        self.tool_requires("ament_lint/0.19.3@ros-kilted", visible=True)
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)

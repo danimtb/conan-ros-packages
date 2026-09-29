@@ -23,12 +23,6 @@ class RosPackageConan(ConanFile):
 
     def requirements(self):
         self.requires(
-            "ament_cmake/2.7.5@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
             "example_interfaces/0.13.1@ros-kilted",
             transitive_headers=True,
             transitive_libs=True,
@@ -36,12 +30,6 @@ class RosPackageConan(ConanFile):
         )
         self.requires(
             "launch_ros/0.28.5@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "launch_xml/3.8.7@ros-kilted",
             transitive_headers=True,
             transitive_libs=True,
             run=True,
@@ -102,6 +90,10 @@ class RosPackageConan(ConanFile):
             "setuptools/75.8.0@ros-kilted",
             run=True,
         )
+
+    def build_requirements(self):
+        self.tool_requires("ament_cmake/2.7.5@ros-kilted")
+        self.tool_requires("launch_xml/3.8.7@ros-kilted", visible=True)
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)
