@@ -46,8 +46,9 @@ conan remote add ros-kilted ./kilted --type=local-recipes-index
 conan install --requires=rclcpp/29.5.8@ros-kilted --build=missing -pr:a profiles/ros
 ```
 
-See `examples/consumer_cmake`, `examples/consumer_colcon` and
-`examples/consumer_workspace`. Each example is run with `python run.py`.
+See `examples/consumer_cmake`, `examples/consumer_colcon`,
+`examples/consumer_workspace` and `examples/minimal_cpp_node`. Each example is
+run with `python run.py`.
 
 ## Add a distro
 

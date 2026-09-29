@@ -109,3 +109,7 @@ jobs:
       - name: Example consumer_colcon
         working-directory: examples/consumer_colcon
         run: python run.py
+
+      - name: Example minimal_cpp_node
+        working-directory: examples/minimal_cpp_node
+        run: python run.py
