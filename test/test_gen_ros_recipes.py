@@ -46,6 +46,32 @@ class ReachableDepsTest(unittest.TestCase):
         self.assertIn("lz4", gen_ros_recipes._reachable_deps("a", graph, {}))
 
 
+class ToolRequireDedupeTest(unittest.TestCase):
+    def test_visible_wins_and_plain_strings_stay_plain(self):
+        deduped = gen_ros_recipes._dedupe_tool_requires(
+            [
+                "cmake/3.29.3",
+                ros_pkgxml.RecipeToolRequire("ament_cmake/2.7.5@ros-kilted"),
+                ros_pkgxml.RecipeToolRequire(
+                    "rosidl_default_generators/1.7.2@ros-kilted", visible=False
+                ),
+                ros_pkgxml.RecipeToolRequire(
+                    "rosidl_default_generators/1.7.2@ros-kilted", visible=True
+                ),
+            ]
+        )
+        self.assertEqual(
+            deduped,
+            [
+                ros_pkgxml.RecipeToolRequire("ament_cmake/2.7.5@ros-kilted"),
+                "cmake/3.29.3",
+                ros_pkgxml.RecipeToolRequire(
+                    "rosidl_default_generators/1.7.2@ros-kilted", visible=True
+                ),
+            ],
+        )
+
+
 class LockManifestTest(unittest.TestCase):
     def test_records_roots_without_variant_metadata(self):
         config = rdi.DistroConfig(

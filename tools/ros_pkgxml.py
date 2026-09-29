@@ -47,6 +47,29 @@ def _text(node: ET.Element | None) -> str:
     return node.text.strip()
 
 
+# package.xml tags that mean "link or load this", as opposed to a build tool.
+LIBRARY_DEPEND_TAGS = frozenset({
+    "depend",
+    "build_depend",
+    "build_export_depend",
+    "exec_depend",
+})
+BUILDTOOL_DEPEND_TAGS = frozenset({
+    "buildtool_depend",
+    "buildtool_export_depend",
+})
+# <depend> already means build + export + exec. These are the tags that publish a
+# dependency past the package that names it.
+PROPAGATED_DEPEND_TAGS = frozenset({
+    "depend",
+    "exec_depend",
+    "build_export_depend",
+})
+# Interface code generators join this group in their own package.xml. The generator
+# reads the membership; it does not keep a list of package names.
+ROSIDL_GENERATOR_GROUP = "rosidl_generator_packages"
+
+
 @dataclass
 class PackageManifest:
     name: str
@@ -55,6 +78,86 @@ class PackageManifest:
     build_type: str
     deps: set[str]
     path: Path
+    # Dependency name -> the package.xml tags that declared it. `<depend>` stays in
+    # this map as itself; callers expand it when they decide host vs build context.
+    dep_tags: dict = field(default_factory=dict)
+    # <member_of_group> values. rosidl_generator_packages marks a code generator.
+    groups: set = field(default_factory=set)
+
+
+def is_buildtool_only(tags: set[str]) -> bool:
+    """True when every declaration of this dependency is a build tool.
+
+    A name that is also a `<depend>`, `<build_depend>` or `<exec_depend>` is a
+    library the package links, so it stays a host requirement. Build tools are
+    the ones a node does not load.
+    """
+    return bool(tags & BUILDTOOL_DEPEND_TAGS) and not bool(tags & LIBRARY_DEPEND_TAGS)
+
+
+def is_private_build_depend(tags: set[str]) -> bool:
+    """True for a `<build_depend>` that is not exported and not executed.
+
+    `<build_export_depend>` has to stay a host requirement: consumers that compile
+    against this package need it, and Conan carries a host requirement of a build
+    tool into that consumer's build. A private `<build_depend>` on a macro package
+    (CMake `project(NONE)`, or pure Python) is only used while this package builds.
+    A private `<build_depend>` on a compiled library stays a host requirement,
+    because the shared library still imports that DLL when the node runs.
+    """
+    return (
+        "build_depend" in tags
+        and "build_export_depend" not in tags
+        and not bool(tags & {"depend", "exec_depend"})
+    )
+
+
+def buildtool_visible(tags: set[str]) -> bool:
+    """`<buildtool_export_depend>` has to be visible to a consumer that builds against this package."""
+    return "buildtool_export_depend" in tags
+
+
+def is_code_generator(groups: set[str]) -> bool:
+    """True when package.xml joins the upstream interface-generator group."""
+    return ROSIDL_GENERATOR_GROUP in groups
+
+
+def is_visible_build_context_depend(
+    tags: set[str],
+    *,
+    dependency_is_generator: bool,
+    dependency_is_macro: bool,
+    dependency_is_aggregator: bool,
+    depender_is_macro: bool,
+) -> bool:
+    """True when a propagated dependency is still only used to build.
+
+    A code generator, and a macro package that does not pull a compiled library,
+    run while a later package generates interfaces. They are visible tool
+    requirements: the build sees them, a node install does not.
+
+    A macro that build-exports another macro stays a host requirement. Conan
+    carries host requirements of a build tool into the consumer's build, and a
+    non-visible tool requirement would not. That is how ament_cmake's exported
+    macros stay on the consumer's CMAKE_PREFIX_PATH.
+
+    A macro that aggregates compiled libraries (rosidl_default_runtime) stays a
+    host requirement too, so those libraries follow the node.
+    """
+    if not (tags & PROPAGATED_DEPEND_TAGS):
+        return False
+    if dependency_is_generator:
+        return True
+    if not dependency_is_macro or dependency_is_aggregator:
+        return False
+    export_only = (
+        "build_export_depend" in tags
+        and "exec_depend" not in tags
+        and "depend" not in tags
+    )
+    if export_only and depender_is_macro:
+        return False
+    return True
 
 
 def _infer_build_type(package_dir: Path, deps: set[str]) -> str:
@@ -212,6 +315,8 @@ def parse_package_manifest(path: Path) -> PackageManifest:
     license_name = ""
     build_type = ""
     deps: set[str] = set()
+    dep_tags: dict[str, set[str]] = {}
+    groups: set[str] = set()
     for child in list(root):
         tag = _local_tag(child.tag)
         if tag == "name" and not name:
@@ -220,10 +325,15 @@ def parse_package_manifest(path: Path) -> PackageManifest:
             version = _text(child)
         elif tag == "license" and not license_name:
             license_name = _text(child)
+        elif tag == "member_of_group":
+            group = _text(child)
+            if group:
+                groups.add(group)
         elif tag in DEPEND_TAGS:
             dep = _text(child)
             if dep:
                 deps.add(dep)
+                dep_tags.setdefault(dep, set()).add(tag)
         elif tag == "export":
             for sub in list(child):
                 if _local_tag(sub.tag) == "build_type" and not build_type:
@@ -242,6 +352,8 @@ def parse_package_manifest(path: Path) -> PackageManifest:
         build_type=build_type,
         deps=deps,
         path=path,
+        dep_tags=dep_tags,
+        groups=groups,
     )
 
 
@@ -299,6 +411,18 @@ class RecipeRequire:
     options: dict | None = None
     run: bool = False
     transitive: bool = True
+
+
+@dataclass(frozen=True)
+class RecipeToolRequire:
+    """One `self.tool_requires()` line. `visible` propagates the tool to consumers' builds."""
+
+    ref: str
+    visible: bool = False
+
+
+def tool_require_ref(req) -> str:
+    return req if isinstance(req, str) else req.ref
 
 
 @dataclass
@@ -434,10 +558,18 @@ def _cmake_deps_block(spec: RecipeSpec) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _tool_require_line(req) -> str:
+    if isinstance(req, str):
+        return f'        self.tool_requires("{req}")'
+    if req.visible:
+        return f'        self.tool_requires("{req.ref}", visible=True)'
+    return f'        self.tool_requires("{req.ref}")'
+
+
 def _build_requirements_block(tool_requires: list) -> str:
     if not tool_requires:
         return ""
-    body = "\n".join(f'        self.tool_requires("{t}")' for t in tool_requires)
+    body = "\n".join(_tool_require_line(req) for req in tool_requires)
     return f"\n    def build_requirements(self):\n{body}\n"
 
 
