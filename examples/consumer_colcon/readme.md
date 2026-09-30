@@ -18,4 +18,5 @@ emit it for the Visual Studio generator).
 python run.py
 ```
 
-`dummy_lib` is workspace-local. `ament_cmake` and `rclcpp` resolve from `ros-kilted`.
+`dummy_lib` is workspace-local. `rclcpp` is a requirement. `ament_cmake` is a
+tool requirement: colcon needs it to configure, and the node does not load it.

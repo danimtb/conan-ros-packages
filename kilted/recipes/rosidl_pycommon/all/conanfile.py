@@ -26,13 +26,12 @@ class RosPackageConan(ConanFile):
 
     def requirements(self):
         self.requires(
-            "rosidl_parser/4.9.6@ros-kilted",
-            run=True,
-        )
-        self.requires(
             "setuptools/75.8.0@ros-kilted",
             run=True,
         )
+
+    def build_requirements(self):
+        self.tool_requires("rosidl_parser/4.9.6@ros-kilted", visible=True)
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)

@@ -285,6 +285,26 @@ def _pip_package_spec(package: PipPackage, user: str) -> "ros_pkgxml.RecipeSpec"
     )
 
 
+def _dedupe_tool_requires(items: list) -> list:
+    """One entry per reference. A visible build tool wins over a private one."""
+    visible: dict[str, bool] = {}
+    as_object: dict[str, bool] = {}
+    for item in items:
+        if isinstance(item, str):
+            ref, is_visible, obj = item, False, False
+        else:
+            ref, is_visible, obj = item.ref, item.visible, True
+        visible[ref] = visible.get(ref, False) or is_visible
+        as_object[ref] = as_object.get(ref, False) or obj
+    deduped = []
+    for ref in sorted(visible):
+        if as_object[ref]:
+            deduped.append(ros_pkgxml.RecipeToolRequire(ref, visible=visible[ref]))
+        else:
+            deduped.append(ref)
+    return deduped
+
+
 def _with_user(ref: str, user: str) -> str:
     return ref if "@" in ref else f"{ref}@{user}"
 
@@ -416,6 +436,39 @@ def generate(
             raise GeneratorError(f"{package} is not released in the pinned {distro} distribution")
         versions[package] = entry["version"].split("-", 1)[0]
 
+    # A private <build_depend> is a tool only when the dependency installs no native
+    # library. Generators and other macros that do not pull a compiled library are
+    # tools even when package.xml says <exec_depend> or <build_export_depend>.
+    # Both facts come from each dependency's own sources.
+    macro_packages: set[str] = set()
+    generator_packages: set[str] = set()
+    propagated: dict[str, set[str]] = {}
+    for package in packages:
+        entry = index[package]
+        _sha, data = _fetch_archive(_archive_url(entry, package), cache_dir)
+        manifest, read_root = _manifest_from_archive(
+            data, package, cache_dir / "pkgxml" / package
+        )
+        if manifest.build_type not in ros_pkgxml.SUPPORTED_BUILD_TYPES:
+            continue
+        if ros_pkgxml.is_arch_independent(manifest.build_type, read_root):
+            macro_packages.add(package)
+        if ros_pkgxml.is_code_generator(manifest.groups):
+            generator_packages.add(package)
+        propagated[package] = {
+            dep
+            for dep, tags in manifest.dep_tags.items()
+            if dep in versions and tags & ros_pkgxml.PROPAGATED_DEPEND_TAGS
+        }
+    # A macro that exists to pull compiled libraries (the rosidl runtime groups)
+    # stays a host requirement, so those libraries follow a node.
+    aggregators = {
+        package
+        for package in macro_packages
+        for dep in propagated.get(package, ())
+        if dep not in macro_packages and dep not in generator_packages
+    }
+
     unmapped: dict[str, list[str]] = {}
     unsupported: dict[str, str] = {}
     pip_packages: dict[str, PipPackage] = {}
@@ -442,6 +495,38 @@ def generate(
             if dep == package or dep in rosdep_map.skip_packages:
                 continue
             if dep in versions:
+                tags = manifest.dep_tags.get(dep, set())
+                # Build tools stay in the build context, so a node install does not
+                # deploy them. A private <build_depend> on a macro package is one
+                # such edge. A code generator, or a macro that does not aggregate
+                # compiled libraries, is too, even when package.xml propagates it
+                # with <exec_depend> or <build_export_depend>. A compiled library
+                # listed the same way stays a host requirement, because the shared
+                # library still loads it.
+                if ros_pkgxml.is_buildtool_only(tags) or (
+                    dep in macro_packages and ros_pkgxml.is_private_build_depend(tags)
+                ):
+                    tool_requires.append(
+                        ros_pkgxml.RecipeToolRequire(
+                            f"{dep}/{versions[dep]}@{user}",
+                            visible=ros_pkgxml.buildtool_visible(tags),
+                        )
+                    )
+                    continue
+                if ros_pkgxml.is_visible_build_context_depend(
+                    tags,
+                    dependency_is_generator=dep in generator_packages,
+                    dependency_is_macro=dep in macro_packages,
+                    dependency_is_aggregator=dep in aggregators,
+                    depender_is_macro=package in macro_packages,
+                ):
+                    tool_requires.append(
+                        ros_pkgxml.RecipeToolRequire(
+                            f"{dep}/{versions[dep]}@{user}",
+                            visible=True,
+                        )
+                    )
+                    continue
                 requires.append(
                     ros_pkgxml.RecipeRequire(
                         f"{dep}/{versions[dep]}@{user}",
@@ -455,6 +540,23 @@ def generate(
                 missing.append(dep)
                 continue
             section, value = resolved
+            tags = manifest.dep_tags.get(dep, set())
+            # The map says where the binary comes from. package.xml says whether it
+            # is a build tool: python3-catkin-pkg-modules is a pip package and also
+            # a <buildtool_depend>, so it must not become a host requirement.
+            if section in ("requires", "pip_packages") and ros_pkgxml.is_buildtool_only(tags):
+                if section == "pip_packages":
+                    pip_packages[value.ref] = value
+                    needs_pip.append(value.ref)
+                    ref = _with_user(value.ref, user)
+                else:
+                    ref = _qualify_ref(value, user, extra_names)
+                tool_requires.append(
+                    ros_pkgxml.RecipeToolRequire(
+                        ref, visible=ros_pkgxml.buildtool_visible(tags)
+                    )
+                )
+                continue
             if section == "requires":
                 requires.append(
                     ros_pkgxml.RecipeRequire(
@@ -499,10 +601,18 @@ def generate(
             requires.append(
                 ros_pkgxml.RecipeRequire(_with_user(ref, user), run=True, transitive=False)
             )
-        tool_requires += implicit.get("tool_requires") or []
+        for ref in implicit.get("tool_requires") or []:
+            if ref.split("/", 1)[0] == package:
+                continue
+            if ref in known_pip:
+                pip_packages[ref] = known_pip[ref]
+                needs_pip.append(ref)
+                tool_requires.append(_with_user(ref, user))
+            else:
+                tool_requires.append(ref)
         pip_requires += implicit.get("pip") or []
         requires = list({r.ref: r for r in requires}.values())
-        tool_requires = sorted(set(tool_requires))
+        tool_requires = _dedupe_tool_requires(tool_requires)
         pip_requires = sorted(set(pip_requires))
 
         arch_independent = ros_pkgxml.is_arch_independent(manifest.build_type, read_root)
@@ -553,7 +663,7 @@ def generate(
             "pkg_config": pkg_config,
             "console_scripts": console_scripts,
             "ros_requires": len([r for r in requires if r.ref.endswith(f"@{user}")]),
-            "tool_requires": tool_requires,
+            "tool_requires": [ros_pkgxml.tool_require_ref(t) for t in tool_requires],
             "pip_requires": pip_requires,
             "pip_packages": sorted(set(needs_pip)),
         }

@@ -30,10 +30,6 @@ class RosPackageConan(ConanFile):
             run=True,
         )
         self.requires(
-            "ament_index_python/1.11.4@ros-kilted",
-            run=True,
-        )
-        self.requires(
             "rclpy/9.1.5@ros-kilted",
             run=True,
         )
@@ -46,13 +42,13 @@ class RosPackageConan(ConanFile):
             run=True,
         )
         self.requires(
-            "rosidl_runtime_py/0.14.2@ros-kilted",
-            run=True,
-        )
-        self.requires(
             "setuptools/75.8.0@ros-kilted",
             run=True,
         )
+
+    def build_requirements(self):
+        self.tool_requires("ament_index_python/1.11.4@ros-kilted", visible=True)
+        self.tool_requires("rosidl_runtime_py/0.14.2@ros-kilted", visible=True)
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)

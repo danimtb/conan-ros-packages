@@ -32,10 +32,10 @@ if WINDOWS:
         encoding="utf-8",
         newline="\n",
     )
-    run(r". .\.conan\conanrosenv.ps1; colcon build --symlink-install")
+    run(r". .\.conan\conanrosenv.ps1; colcon build")
     run(r". .\.conan\conanrosenv.ps1; . .\install\setup.ps1; "
         r".\install\consumer_node\lib\consumer_node\consumer_node.exe")
 else:
-    run(". ./.conan/conanrosenv.sh; colcon build --symlink-install")
+    run(". ./.conan/conanrosenv.sh; colcon build")
     run(". ./.conan/conanrosenv.sh; . ./install/setup.bash; "
         "./install/consumer_node/lib/consumer_node/consumer_node")

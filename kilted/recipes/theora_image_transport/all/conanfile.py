@@ -29,12 +29,6 @@ class RosPackageConan(ConanFile):
 
     def requirements(self):
         self.requires(
-            "ament_cmake/2.7.5@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
             "cv_bridge/4.1.0@ros-kilted",
             transitive_headers=True,
             transitive_libs=True,
@@ -82,12 +76,6 @@ class RosPackageConan(ConanFile):
             run=True,
         )
         self.requires(
-            "rosidl_default_generators/1.7.2@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
             "rosidl_default_runtime/1.7.2@ros-kilted",
             transitive_headers=True,
             transitive_libs=True,
@@ -115,7 +103,9 @@ class RosPackageConan(ConanFile):
         )
 
     def build_requirements(self):
+        self.tool_requires("ament_cmake/2.7.5@ros-kilted")
         self.tool_requires("pkgconf/2.2.0")
+        self.tool_requires("rosidl_default_generators/1.7.2@ros-kilted")
 
     def source(self):
         get(self, **self.conan_data["sources"][self.version], strip_root=True)

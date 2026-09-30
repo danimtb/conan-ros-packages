@@ -23,24 +23,6 @@ class RosPackageConan(ConanFile):
 
     def requirements(self):
         self.requires(
-            "ament_cmake_core/2.7.5@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "ament_cmake_test/2.7.5@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
-            "ament_cmake_vendor_package/2.7.5@ros-kilted",
-            transitive_headers=True,
-            transitive_libs=True,
-            run=True,
-        )
-        self.requires(
             "eigen/3.4.0",
             transitive_headers=True,
             transitive_libs=True,
@@ -72,6 +54,9 @@ class RosPackageConan(ConanFile):
         )
 
     def build_requirements(self):
+        self.tool_requires("ament_cmake_core/2.7.5@ros-kilted")
+        self.tool_requires("ament_cmake_test/2.7.5@ros-kilted")
+        self.tool_requires("ament_cmake_vendor_package/2.7.5@ros-kilted")
         self.tool_requires("cmake/3.29.3")
 
     def source(self):

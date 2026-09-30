@@ -26,4 +26,5 @@ How to add packages: [docs/adding-packages.md](docs/adding-packages.md).
 Examples of consuming the index (each is `python run.py`):
 [examples/consumer_cmake](examples/consumer_cmake),
 [examples/consumer_colcon](examples/consumer_colcon),
-[examples/consumer_workspace](examples/consumer_workspace).
+[examples/consumer_workspace](examples/consumer_workspace),
+[examples/minimal_cpp_node](examples/minimal_cpp_node).

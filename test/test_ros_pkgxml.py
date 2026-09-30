@@ -39,6 +39,162 @@ def _write_pkg(
 
 
 class TestRosPkgXml(unittest.TestCase):
+    def test_buildtool_dependencies_are_separate_from_libraries(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pkg = Path(tmp) / "std_msgs"
+            pkg.mkdir()
+            (pkg / "package.xml").write_text(
+                "\n".join(
+                    [
+                        '<?xml version="1.0"?>',
+                        '<package format="3">',
+                        "  <name>std_msgs</name>",
+                        "  <version>1.0.0</version>",
+                        "  <license>Apache-2.0</license>",
+                        "  <buildtool_depend>ament_cmake</buildtool_depend>",
+                        "  <buildtool_depend>rosidl_default_generators</buildtool_depend>",
+                        "  <buildtool_export_depend>rosidl_default_generators</buildtool_export_depend>",
+                        "  <depend>builtin_interfaces</depend>",
+                        "  <exec_depend>rosidl_default_runtime</exec_depend>",
+                        "  <build_depend>rosidl_default_runtime</build_depend>",
+                        "  <export><build_type>ament_cmake</build_type></export>",
+                        "</package>",
+                        "",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            manifest = ros_pkgxml.parse_package_manifest(pkg / "package.xml")
+            self.assertTrue(ros_pkgxml.is_buildtool_only(manifest.dep_tags["ament_cmake"]))
+            self.assertFalse(ros_pkgxml.buildtool_visible(manifest.dep_tags["ament_cmake"]))
+            self.assertTrue(
+                ros_pkgxml.is_buildtool_only(manifest.dep_tags["rosidl_default_generators"])
+            )
+            self.assertTrue(
+                ros_pkgxml.buildtool_visible(manifest.dep_tags["rosidl_default_generators"])
+            )
+            self.assertFalse(ros_pkgxml.is_buildtool_only(manifest.dep_tags["builtin_interfaces"]))
+            self.assertFalse(
+                ros_pkgxml.is_buildtool_only(manifest.dep_tags["rosidl_default_runtime"])
+            )
+            self.assertFalse(
+                ros_pkgxml.is_private_build_depend(manifest.dep_tags["rosidl_default_runtime"])
+            )
+
+    def test_private_build_depend_is_only_the_bare_tag(self):
+        self.assertTrue(ros_pkgxml.is_private_build_depend({"build_depend"}))
+        self.assertFalse(
+            ros_pkgxml.is_private_build_depend({"build_depend", "build_export_depend"})
+        )
+        self.assertFalse(ros_pkgxml.is_private_build_depend({"build_depend", "exec_depend"}))
+        self.assertFalse(ros_pkgxml.is_private_build_depend({"depend"}))
+        self.assertFalse(ros_pkgxml.is_private_build_depend({"buildtool_depend"}))
+
+    def test_generators_and_plain_macros_are_visible_build_tools(self):
+        visible = dict(
+            dependency_is_generator=False,
+            dependency_is_macro=True,
+            dependency_is_aggregator=False,
+            depender_is_macro=False,
+        )
+        self.assertTrue(
+            ros_pkgxml.is_visible_build_context_depend({"exec_depend"}, **visible)
+        )
+        self.assertTrue(
+            ros_pkgxml.is_visible_build_context_depend(
+                {"build_export_depend"},
+                dependency_is_generator=True,
+                dependency_is_macro=False,
+                dependency_is_aggregator=False,
+                depender_is_macro=True,
+            )
+        )
+        # A macro exporting another macro stays a host requirement so the
+        # consumer's build still receives it.
+        self.assertFalse(
+            ros_pkgxml.is_visible_build_context_depend(
+                {"build_export_depend"},
+                dependency_is_generator=False,
+                dependency_is_macro=True,
+                dependency_is_aggregator=False,
+                depender_is_macro=True,
+            )
+        )
+        # A runtime aggregator and a compiled library stay host requirements.
+        self.assertFalse(
+            ros_pkgxml.is_visible_build_context_depend(
+                {"exec_depend"},
+                dependency_is_generator=False,
+                dependency_is_macro=True,
+                dependency_is_aggregator=True,
+                depender_is_macro=False,
+            )
+        )
+        self.assertFalse(
+            ros_pkgxml.is_visible_build_context_depend(
+                {"exec_depend"},
+                dependency_is_generator=False,
+                dependency_is_macro=False,
+                dependency_is_aggregator=False,
+                depender_is_macro=False,
+            )
+        )
+        self.assertFalse(
+            ros_pkgxml.is_visible_build_context_depend({"build_depend"}, **visible)
+        )
+
+    def test_generator_group_is_read_from_the_manifest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pkg = Path(tmp) / "gen"
+            pkg.mkdir()
+            (pkg / "package.xml").write_text(
+                "\n".join(
+                    [
+                        '<?xml version="1.0"?>',
+                        '<package format="3">',
+                        "  <name>gen</name>",
+                        "  <version>1.0.0</version>",
+                        "  <license>Apache-2.0</license>",
+                        "  <member_of_group>rosidl_generator_packages</member_of_group>",
+                        "  <export><build_type>ament_cmake</build_type></export>",
+                        "</package>",
+                        "",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            manifest = ros_pkgxml.parse_package_manifest(pkg / "package.xml")
+            self.assertTrue(ros_pkgxml.is_code_generator(manifest.groups))
+
+    def test_visible_build_tool_is_rendered(self):
+        spec = ros_pkgxml.RecipeSpec(
+            name="std_msgs",
+            version="5.5.2",
+            user="ros-kilted",
+            license="Apache-2.0",
+            build_type="ament_cmake",
+            from_source=True,
+            requires=[
+                ros_pkgxml.RecipeRequire("builtin_interfaces/2.3.2@ros-kilted", run=True),
+            ],
+            tool_requires=[
+                "cmake/3.29.3",
+                ros_pkgxml.RecipeToolRequire("ament_cmake/2.7.5@ros-kilted"),
+                ros_pkgxml.RecipeToolRequire(
+                    "rosidl_default_generators/1.7.2@ros-kilted", visible=True
+                ),
+            ],
+        )
+        text = ros_pkgxml.render_recipe(spec)
+        self.assertIn('self.requires(\n            "builtin_interfaces/2.3.2@ros-kilted",', text)
+        self.assertIn('self.tool_requires("cmake/3.29.3")', text)
+        self.assertIn('self.tool_requires("ament_cmake/2.7.5@ros-kilted")', text)
+        self.assertIn(
+            'self.tool_requires("rosidl_default_generators/1.7.2@ros-kilted", visible=True)',
+            text,
+        )
+        self.assertNotIn('self.requires(\n            "ament_cmake/2.7.5@ros-kilted"', text)
+
     def test_parse_and_alias(self):
         with tempfile.TemporaryDirectory() as tmp:
             pkg = _write_pkg(Path(tmp), "foo", build_type="ament_cmake_python")
