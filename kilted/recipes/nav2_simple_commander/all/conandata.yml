@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_simple_commander/1.4.2-1.tar.gz
+    sha256: ad768286621723205495ae0e9772ba1bf963fb5a6a5a98b7add04f8796366536

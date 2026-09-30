@@ -1,0 +1,4 @@
+sources:
+  4.3.0:
+    url: https://github.com/ros2-gbp/bond_core-release/archive/refs/tags/release/kilted/bond/4.3.0-1.tar.gz
+    sha256: 099a7ce85f524ebaa15459b9952d3ad5b19109cdaab0467081c1693a83cbbe9a

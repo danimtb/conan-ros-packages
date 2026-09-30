@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/dwb_msgs/1.4.2-1.tar.gz
+    sha256: 8fb6650adddc6c9ce7890fd2e6434ae9b79a28706bbfd50409b6fea4d918e944

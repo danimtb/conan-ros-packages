@@ -1,0 +1,4 @@
+sources:
+  3.9.4:
+    url: https://github.com/ros2-gbp/robot_localization-release/archive/refs/tags/release/kilted/robot_localization/3.9.4-1.tar.gz
+    sha256: c60fc8bfd650968a454928778916ba197f578762ddf3dc72792217c451870730

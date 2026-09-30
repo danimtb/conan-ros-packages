@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_theta_star_planner/1.4.2-1.tar.gz
+    sha256: 2c5ae222ad860ef4b29ad94dd32164b704d8a83f1c8f565104d7e7f17a889183

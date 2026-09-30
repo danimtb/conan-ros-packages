@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/dwb_critics/1.4.2-1.tar.gz
+    sha256: ff3f0f124d7fea56340679d7e7bd3579ed3eb57d56d12f2dd0200553d53813db

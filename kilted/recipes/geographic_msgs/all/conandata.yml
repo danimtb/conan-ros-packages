@@ -1,0 +1,4 @@
+sources:
+  1.0.6:
+    url: https://github.com/ros2-gbp/geographic_info-release/archive/refs/tags/release/kilted/geographic_msgs/1.0.6-2.tar.gz
+    sha256: daf4c993e6ba66c133658e30825c362a83202a2e24d94c6e95b98804f6107efa

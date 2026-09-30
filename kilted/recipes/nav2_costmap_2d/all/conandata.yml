@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_costmap_2d/1.4.2-1.tar.gz
+    sha256: 3a56ba340227881080ee25c9370dbe5d5447f5bf340adb9a0fb77c397e1dffea

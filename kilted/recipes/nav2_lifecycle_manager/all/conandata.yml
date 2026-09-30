@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_lifecycle_manager/1.4.2-1.tar.gz
+    sha256: 2db5c7fd72b67510acb54ad65d31b2471fd19a70304dcc7921acd3675583add4

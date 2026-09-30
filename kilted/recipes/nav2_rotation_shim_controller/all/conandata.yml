@@ -1,0 +1,4 @@
+sources:
+  1.4.2:
+    url: https://github.com/ros2-gbp/navigation2-release/archive/refs/tags/release/kilted/nav2_rotation_shim_controller/1.4.2-1.tar.gz
+    sha256: 482fb771b4596b3ca85437e4e7f8d4d250f0afa1799d4a4226e909bdfc5c5cd4
