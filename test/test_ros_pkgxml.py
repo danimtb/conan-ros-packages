@@ -401,6 +401,16 @@ class TestRosPkgXml(unittest.TestCase):
                     "ament_python", ros_pkgxml.package_file_reader(cli)
                 )
             )
+            (cli / "setup.cfg").unlink()
+            (cli / "setup.py").write_text(
+                'setup(entry_points={"console_scripts": ["ros2 = ros2cli.cli:main"]})\n',
+                encoding="utf-8",
+            )
+            self.assertTrue(
+                ros_pkgxml.installs_console_scripts(
+                    "ament_python", ros_pkgxml.package_file_reader(cli)
+                )
+            )
 
     def test_external_cmake_recipe_configures_a_subdir(self):
         spec = ros_pkgxml.RecipeSpec(

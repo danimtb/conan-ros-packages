@@ -273,7 +273,7 @@ def looks_up_deps_with_pkg_config(build_type: str, read_text) -> bool:
 
 
 _CONSOLE_SCRIPTS_RE = re.compile(
-    r"\[options\.entry_points\]|\[project\.scripts\]|console_scripts\s*[=:]",
+    r"\[options\.entry_points\]|\[project\.scripts\]|console_scripts[\"']?\s*[=:]",
     re.IGNORECASE,
 )
 
