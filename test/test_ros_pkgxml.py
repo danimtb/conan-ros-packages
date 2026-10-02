@@ -265,6 +265,8 @@ class TestRosPkgXml(unittest.TestCase):
         )
         text = ros_pkgxml.render_recipe(spec)
         self.assertIn('prepend_path("PATH", os.path.join(pkg, "Scripts"))', text)
+        self.assertIn('stem + "-script.py"', text)
+        compile(text, "<ros2cli>", "exec")
 
     def test_render_pip_recipe(self):
         spec = ros_pkgxml.RecipeSpec(
@@ -294,7 +296,9 @@ class TestRosPkgXml(unittest.TestCase):
         )
         text = ros_pkgxml.render_recipe(spec)
         self.assertIn('prepend_path("PATH", os.path.join(pkg, "Scripts"))', text)
+        self.assertIn('stem + "-script.py"', text)
         self.assertIn("self.cpp_info.bindirs = []", text)
+        compile(text, "<vcstool>", "exec")
 
     def test_pkg_config_and_vendored_prefix(self):
         spec = ros_pkgxml.RecipeSpec(

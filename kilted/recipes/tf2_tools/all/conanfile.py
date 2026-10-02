@@ -65,6 +65,36 @@ class RosPackageConan(ConanFile):
             cwd=self.source_folder,
         )
 
+        # The distlib .exe launcher is a second console process. It forwards stdout
+        # to the caller, and Windows still opens an empty console for it.
+        # Run the interpreter in the caller's console.
+        if self.settings.os == "Windows":
+            import io
+            import zipfile
+            scripts = os.path.join(self.package_folder, "Scripts")
+            if os.path.isdir(scripts):
+                for name in os.listdir(scripts):
+                    if not name.endswith(".exe"):
+                        continue
+                    exe = os.path.join(scripts, name)
+                    blob = open(exe, "rb").read()
+                    start = blob.rfind(b"#!")
+                    zip_at = blob.find(b"PK\x03\x04", 0 if start < 0 else start)
+                    if start < 0 or zip_at < 0:
+                        continue
+                    python = blob[start + 2:blob.find(b"\n", start)].decode().strip().strip('"')
+                    with zipfile.ZipFile(io.BytesIO(blob[zip_at:])) as archive:
+                        source = archive.read("__main__.py")
+                    stem = name[:-4]
+                    script = os.path.join(scripts, stem + "-script.py")
+                    with open(script, "wb") as handle:
+                        handle.write(source)
+                    cmd = os.path.join(scripts, stem + ".cmd")
+                    line = '@echo off\r\n"' + python + '" "%~dp0' + stem + '-script.py" %*\r\n'
+                    with open(cmd, "w", newline="\r\n", encoding="utf-8") as handle:
+                        handle.write(line)
+                    os.remove(exe)
+
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "none")
         self.cpp_info.includedirs = []
