@@ -265,6 +265,8 @@ class TestRosPkgXml(unittest.TestCase):
         )
         text = ros_pkgxml.render_recipe(spec)
         self.assertIn('prepend_path("PATH", os.path.join(pkg, "Scripts"))', text)
+        self.assertIn('stem + "-script.py"', text)
+        compile(text, "<ros2cli>", "exec")
 
     def test_render_pip_recipe(self):
         spec = ros_pkgxml.RecipeSpec(
@@ -294,7 +296,9 @@ class TestRosPkgXml(unittest.TestCase):
         )
         text = ros_pkgxml.render_recipe(spec)
         self.assertIn('prepend_path("PATH", os.path.join(pkg, "Scripts"))', text)
+        self.assertIn('stem + "-script.py"', text)
         self.assertIn("self.cpp_info.bindirs = []", text)
+        compile(text, "<vcstool>", "exec")
 
     def test_pkg_config_and_vendored_prefix(self):
         spec = ros_pkgxml.RecipeSpec(
@@ -394,6 +398,16 @@ class TestRosPkgXml(unittest.TestCase):
             cli = _write_pkg(Path(tmp), "ros2cli", build_type="ament_python")
             (cli / "setup.cfg").write_text(
                 "[options.entry_points]\nconsole_scripts =\n    ros2 = ros2cli.cli:main\n",
+                encoding="utf-8",
+            )
+            self.assertTrue(
+                ros_pkgxml.installs_console_scripts(
+                    "ament_python", ros_pkgxml.package_file_reader(cli)
+                )
+            )
+            (cli / "setup.cfg").unlink()
+            (cli / "setup.py").write_text(
+                'setup(entry_points={"console_scripts": ["ros2 = ros2cli.cli:main"]})\n',
                 encoding="utf-8",
             )
             self.assertTrue(

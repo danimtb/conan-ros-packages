@@ -273,7 +273,7 @@ def looks_up_deps_with_pkg_config(build_type: str, read_text) -> bool:
 
 
 _CONSOLE_SCRIPTS_RE = re.compile(
-    r"\[options\.entry_points\]|\[project\.scripts\]|console_scripts\s*[=:]",
+    r"\[options\.entry_points\]|\[project\.scripts\]|console_scripts[\"']?\s*[=:]",
     re.IGNORECASE,
 )
 
@@ -671,7 +671,7 @@ class RosPipPackageConan(ConanFile):
             f'--ignore-installed --no-warn-script-location '
             f'--prefix "{{self.package_folder}}"'
         )
-
+{_windows_console_scripts_block(spec)}
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "none")
         self.cpp_info.includedirs = []
@@ -708,6 +708,51 @@ def _python_path_block(spec: RecipeSpec) -> str:
         '            env.prepend_path("PATH", os.path.join(pkg, "bin"))\n'
         '            env.prepend_path("PATH", os.path.join(pkg, "Scripts"))\n'
     )
+
+
+def _windows_console_scripts_block(spec: RecipeSpec) -> str:
+    """Replace pip's Windows .exe launchers with cmd wrappers.
+
+    The distlib launcher is a console process of its own. It forwards the script's
+    stdout to whoever ran it, and Windows still allocates a second console, which
+    has nothing to print. That window stays open for the ros2 daemon. A cmd wrapper
+    runs the interpreter in the caller's console.
+    """
+    if not spec.console_scripts:
+        return ""
+    # This text is dropped into an f-string, so it must not contain braces.
+    # It is also a raw string so the escapes below survive into the recipe.
+    return r'''
+        # The distlib .exe launcher is a second console process. It forwards stdout
+        # to the caller, and Windows still opens an empty console for it.
+        # Run the interpreter in the caller's console.
+        if self.settings.os == "Windows":
+            import io
+            import zipfile
+            scripts = os.path.join(self.package_folder, "Scripts")
+            if os.path.isdir(scripts):
+                for name in os.listdir(scripts):
+                    if not name.endswith(".exe"):
+                        continue
+                    exe = os.path.join(scripts, name)
+                    blob = open(exe, "rb").read()
+                    start = blob.rfind(b"#!")
+                    zip_at = blob.find(b"PK\x03\x04", 0 if start < 0 else start)
+                    if start < 0 or zip_at < 0:
+                        continue
+                    python = blob[start + 2:blob.find(b"\n", start)].decode().strip().strip('"')
+                    with zipfile.ZipFile(io.BytesIO(blob[zip_at:])) as archive:
+                        source = archive.read("__main__.py")
+                    stem = name[:-4]
+                    script = os.path.join(scripts, stem + "-script.py")
+                    with open(script, "wb") as handle:
+                        handle.write(source)
+                    cmd = os.path.join(scripts, stem + ".cmd")
+                    line = '@echo off\r\n"' + python + '" "%~dp0' + stem + '-script.py" %*\r\n'
+                    with open(cmd, "w", newline="\r\n", encoding="utf-8") as handle:
+                        handle.write(line)
+                    os.remove(exe)
+'''
 
 
 def _runtime_bindirs_block(spec: RecipeSpec) -> str:
@@ -1063,7 +1108,7 @@ class RosPackageConan(ConanFile):
             f'--prefix "{{self.package_folder}}"',
             cwd=self.source_folder,
         )
-
+{_windows_console_scripts_block(spec)}
     def package_info(self):
         self.cpp_info.set_property("cmake_find_mode", "none")
         self.cpp_info.includedirs = []

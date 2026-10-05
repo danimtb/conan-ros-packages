@@ -451,6 +451,18 @@ patches:
         link_directories(${PC_OGG_LIBRARY_DIRS} ${PC_THEORA_LIBRARY_DIRS}
           ${PC_THEORAENC_LIBRARY_DIRS} ${PC_THEORADEC_LIBRARY_DIRS})
 
+  # DETACHED_PROCESS tells a Windows launcher (the distlib ros2.exe, py.exe, or the
+  # Python install manager shim) to skip its own console. The launcher then starts
+  # the real python.exe without that flag, and Windows gives the child a new visible
+  # console. The daemon's stdout is discarded, so the window stays empty for as long
+  # as the daemon lives. CREATE_NO_WINDOW allocates a console with no window and the
+  # child inherits it. The two flags must not be combined: CREATE_NO_WINDOW is ignored
+  # when DETACHED_PROCESS is also set.
+  ros2cli:
+    - file: ros2cli/daemon/daemonize.py
+      search: kwargs.update(creationflags=subprocess.DETACHED_PROCESS)
+      replace: kwargs.update(creationflags=subprocess.CREATE_NO_WINDOW)
+
   ament_cmake_vendor_package:
     - file: cmake/ament_vendor.cmake
       search: |-
