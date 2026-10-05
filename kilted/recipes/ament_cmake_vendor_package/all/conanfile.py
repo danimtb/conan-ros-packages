@@ -48,6 +48,12 @@ class RosPackageConan(ConanFile):
             'list(PREPEND CMAKE_ARGS\n    -DCMAKE_STAGING_PREFIX=<INSTALL_DIR>',
             'list(PREPEND CMAKE_ARGS\n    -DCMAKE_POLICY_DEFAULT_CMP0091=NEW\n    -DCMAKE_STAGING_PREFIX=<INSTALL_DIR>',
         )
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'cmake/ament_vendor.cmake'),
+            'find_program(vcs_EXECUTABLE vcs REQUIRED)',
+            'find_program(vcs_EXECUTABLE NAMES vcs vcs.cmd REQUIRED)',
+        )
 
     def generate(self):
         CMakeDeps(self).generate()

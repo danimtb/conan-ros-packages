@@ -472,6 +472,14 @@ patches:
         list(PREPEND CMAKE_ARGS
             -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
             -DCMAKE_STAGING_PREFIX=<INSTALL_DIR>
+    # find_program(vcs) searches for vcs.exe and vcs.com on Windows, and not for
+    # vcs.cmd. The vcstool recipe replaces the distlib vcs.exe with vcs.cmd so the
+    # launcher does not open a second console, and every vendor package that
+    # actually clones (gz_*) then dies at configure with "Could not find
+    # vcs_EXECUTABLE". The explicit name is found, and CMake will run that .cmd.
+    - file: cmake/ament_vendor.cmake
+      search: find_program(vcs_EXECUTABLE vcs REQUIRED)
+      replace: find_program(vcs_EXECUTABLE NAMES vcs vcs.cmd REQUIRED)
 
 # Dependencies that every package of a given build_type needs at build time but that
 # almost no package.xml declares, because apt/colcon have them installed system-wide.
