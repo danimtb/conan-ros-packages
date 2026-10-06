@@ -66,6 +66,24 @@ class RosPackageConan(ConanFile):
             'set(OGRE_CMAKE_ARGS)',
             'set(OGRE_CMAKE_ARGS)\nif(MSVC)\n  set(OGRE_CXX_FLAGS "/D_HAS_AUTO_PTR_ETC=1 ${OGRE_CXX_FLAGS}")\nendif()',
         )
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'CMakeLists.txt'),
+            '-DCMAKE_POLICY_VERSION_MINIMUM=3.20',
+            '-DCMAKE_POLICY_VERSION_MINIMUM=3.20\n    -DCMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT:BOOL=OFF',
+        )
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'CMakeLists.txt'),
+            'ament_package(\n  CONFIG_EXTRAS_POST "rviz_ogre_vendor-extras.cmake.in"\n)',
+            'if(WIN32)\n  install(CODE "\n    set(_ogre_dest \\"\\${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor\\")\n    if(NOT EXISTS \\"\\${_ogre_dest}/CMake/OGREConfig.cmake\\")\n      file(GLOB_RECURSE _ogre_configs \\"${CMAKE_CURRENT_BINARY_DIR}/ogre_vendor-prefix/OGREConfig.cmake\\")\n      set(_ogre_root \\"\\")\n      foreach(_ogre_config IN LISTS _ogre_configs)\n        string(REPLACE \\"\\\\\\\\\\" \\"/\\" _ogre_config \\"\\${_ogre_config}\\")\n        if(_ogre_config MATCHES \\"/(install|sdk)/CMake/OGREConfig.cmake$\\")\n          get_filename_component(_ogre_cmake \\"\\${_ogre_config}\\" DIRECTORY)\n          get_filename_component(_ogre_root \\"\\${_ogre_cmake}\\" DIRECTORY)\n          break()\n        endif()\n      endforeach()\n      if(_ogre_root)\n        message(STATUS \\"Installing OGRE from \\${_ogre_root}\\")\n        file(COPY \\"\\${_ogre_root}/\\" DESTINATION \\"\\${_ogre_dest}\\")\n      else()\n        message(FATAL_ERROR \\"OGREConfig.cmake was not installed under ${CMAKE_CURRENT_BINARY_DIR}/ogre_vendor-prefix\\")\n      endif()\n    endif()\n  ")\nendif()\n\nament_package(\n  CONFIG_EXTRAS_POST "rviz_ogre_vendor-extras.cmake.in"\n)',
+        )
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'rviz_ogre_vendor-extras.cmake.in'),
+            'if(WIN32)\n  set(OGRE_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/CMake")\n  set(OGRE_CMAKE_MODULE_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/CMake")',
+            'if(WIN32)\n  set(_ogre_prefix "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor")\n  get_filename_component(_ogre_prefix "${_ogre_prefix}" ABSOLUTE)\n  get_filename_component(_ogre_pkg "${@PROJECT_NAME@_DIR}/../../.." ABSOLUTE)\n  set(_ogre_candidates\n    "${_ogre_prefix}/CMake"\n    "${_ogre_prefix}/lib/OGRE/cmake"\n    "${_ogre_prefix}/lib/cmake/OGRE"\n    "${_ogre_pkg}/CMake"\n  )\n  set(OGRE_DIR "")\n  foreach(_ogre_candidate IN LISTS _ogre_candidates)\n    if(EXISTS "${_ogre_candidate}/OGREConfig.cmake")\n      set(OGRE_DIR "${_ogre_candidate}")\n      break()\n    endif()\n  endforeach()\n  if(NOT OGRE_DIR)\n    file(GLOB_RECURSE _ogre_configs "${_ogre_pkg}/OGREConfig.cmake")\n    if(_ogre_configs)\n      list(GET _ogre_configs 0 _ogre_config)\n      get_filename_component(OGRE_DIR "${_ogre_config}" DIRECTORY)\n    else()\n      set(OGRE_DIR "${_ogre_prefix}/CMake")\n    endif()\n  endif()\n  set(OGRE_CMAKE_MODULE_DIR "${OGRE_DIR}")',
+        )
 
     def generate(self):
         CMakeDeps(self).generate()

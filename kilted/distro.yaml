@@ -390,6 +390,84 @@ patches:
         if(MSVC)
           set(OGRE_CXX_FLAGS "/D_HAS_AUTO_PTR_ETC=1 ${OGRE_CXX_FLAGS}")
         endif()
+    # OGRE 1.12 treats an untouched prefix as "install an SDK" and rewrites
+    # CMAKE_INSTALL_PREFIX to <build>/sdk. ament_vendor only packages
+    # ogre_vendor-prefix/install. Keep the flag off so that rewrite cannot win
+    # if the prefix still looks like the platform default.
+    - file: CMakeLists.txt
+      search: -DCMAKE_POLICY_VERSION_MINIMUM=3.20
+      replace: |-
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.20
+            -DCMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT:BOOL=OFF
+    - file: CMakeLists.txt
+      search: |-
+        ament_package(
+          CONFIG_EXTRAS_POST "rviz_ogre_vendor-extras.cmake.in"
+        )
+      replace: |-
+        if(WIN32)
+          install(CODE "
+            set(_ogre_dest \"\${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor\")
+            if(NOT EXISTS \"\${_ogre_dest}/CMake/OGREConfig.cmake\")
+              file(GLOB_RECURSE _ogre_configs \"${CMAKE_CURRENT_BINARY_DIR}/ogre_vendor-prefix/OGREConfig.cmake\")
+              set(_ogre_root \"\")
+              foreach(_ogre_config IN LISTS _ogre_configs)
+                string(REPLACE \"\\\\\" \"/\" _ogre_config \"\${_ogre_config}\")
+                if(_ogre_config MATCHES \"/(install|sdk)/CMake/OGREConfig.cmake$\")
+                  get_filename_component(_ogre_cmake \"\${_ogre_config}\" DIRECTORY)
+                  get_filename_component(_ogre_root \"\${_ogre_cmake}\" DIRECTORY)
+                  break()
+                endif()
+              endforeach()
+              if(_ogre_root)
+                message(STATUS \"Installing OGRE from \${_ogre_root}\")
+                file(COPY \"\${_ogre_root}/\" DESTINATION \"\${_ogre_dest}\")
+              else()
+                message(FATAL_ERROR \"OGREConfig.cmake was not installed under ${CMAKE_CURRENT_BINARY_DIR}/ogre_vendor-prefix\")
+              endif()
+            endif()
+          ")
+        endif()
+
+        ament_package(
+          CONFIG_EXTRAS_POST "rviz_ogre_vendor-extras.cmake.in"
+        )
+    # The Windows branch only looks in opt/.../CMake. The same install can land
+    # in lib/OGRE/cmake, or at the package root when the nested prefix is the
+    # Conan package folder. Search those before giving up.
+    - file: rviz_ogre_vendor-extras.cmake.in
+      search: |-
+        if(WIN32)
+          set(OGRE_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/CMake")
+          set(OGRE_CMAKE_MODULE_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/CMake")
+      replace: |-
+        if(WIN32)
+          set(_ogre_prefix "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor")
+          get_filename_component(_ogre_prefix "${_ogre_prefix}" ABSOLUTE)
+          get_filename_component(_ogre_pkg "${@PROJECT_NAME@_DIR}/../../.." ABSOLUTE)
+          set(_ogre_candidates
+            "${_ogre_prefix}/CMake"
+            "${_ogre_prefix}/lib/OGRE/cmake"
+            "${_ogre_prefix}/lib/cmake/OGRE"
+            "${_ogre_pkg}/CMake"
+          )
+          set(OGRE_DIR "")
+          foreach(_ogre_candidate IN LISTS _ogre_candidates)
+            if(EXISTS "${_ogre_candidate}/OGREConfig.cmake")
+              set(OGRE_DIR "${_ogre_candidate}")
+              break()
+            endif()
+          endforeach()
+          if(NOT OGRE_DIR)
+            file(GLOB_RECURSE _ogre_configs "${_ogre_pkg}/OGREConfig.cmake")
+            if(_ogre_configs)
+              list(GET _ogre_configs 0 _ogre_config)
+              get_filename_component(OGRE_DIR "${_ogre_config}" DIRECTORY)
+            else()
+              set(OGRE_DIR "${_ogre_prefix}/CMake")
+            endif()
+          endif()
+          set(OGRE_CMAKE_MODULE_DIR "${OGRE_DIR}")
   # The graph provides Eigen3 through CMakeDeps, whose config sets Eigen3_FOUND. Upstream
   # tests the uppercase EIGEN3_FOUND, which only the FindEigen3.cmake that eigen3_cmake
   # module ships would set, and its module path does not survive the scope it is inserted
@@ -472,6 +550,43 @@ patches:
         list(PREPEND CMAKE_ARGS
             -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
             -DCMAKE_STAGING_PREFIX=<INSTALL_DIR>
+    # find_program(vcs) searches for vcs.exe and vcs.com on Windows, and not for
+    # vcs.cmd. The vcstool recipe replaces the distlib vcs.exe with vcs.cmd so the
+    # launcher does not open a second console, and every vendor package that
+    # actually clones (gz_*) then dies at configure with "Could not find
+    # vcs_EXECUTABLE". The explicit name is found, and CMake will run that .cmd.
+    - file: cmake/ament_vendor.cmake
+      search: find_program(vcs_EXECUTABLE vcs REQUIRED)
+      replace: find_program(vcs_EXECUTABLE NAMES vcs vcs.cmd REQUIRED)
+    # The Conan toolchain sets CMAKE_INSTALL_PREFIX to the Conan package folder
+    # as a normal variable, which hides the -D prefix and staging ament passes
+    # to the nested project. The nested install then writes into that package
+    # folder, and Conan deletes the folder at the start of package(), so
+    # OGREConfig.cmake never ships. The wrapper runs after the toolchain and
+    # points the install back at ament's staging directory.
+    - file: cmake/ament_vendor.cmake
+      search: 'set(CMAKE_ARGS_CONTENT "${CMAKE_ARGS_CONTENT}\nset(CMAKE_TOOLCHAIN_FILE [=[${CMAKE_TOOLCHAIN_FILE}]=] CACHE INTERNAL \"\")")'
+      replace: |-
+        if(WIN32)
+          get_filename_component(_ament_real_toolchain "${CMAKE_TOOLCHAIN_FILE}" ABSOLUTE)
+          set(_ament_vendor_staging "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}-prefix/install")
+          set(_ament_vendor_prefix "${CMAKE_INSTALL_PREFIX}/opt/${PROJECT_NAME}")
+          file(TO_CMAKE_PATH "${_ament_real_toolchain}" _ament_real_toolchain)
+          file(TO_CMAKE_PATH "${_ament_vendor_staging}" _ament_vendor_staging)
+          file(TO_CMAKE_PATH "${_ament_vendor_prefix}" _ament_vendor_prefix)
+          set(_ament_vendor_wrapper "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}-install-prefix.cmake")
+          file(WRITE "${_ament_vendor_wrapper}"
+        "include(\"${_ament_real_toolchain}\")
+        unset(CMAKE_INSTALL_PREFIX)
+        set(CMAKE_INSTALL_PREFIX \"${_ament_vendor_prefix}\")
+        unset(CMAKE_STAGING_PREFIX)
+        set(CMAKE_STAGING_PREFIX \"${_ament_vendor_staging}\")
+        set(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OFF)
+        ")
+          set(CMAKE_ARGS_CONTENT "${CMAKE_ARGS_CONTENT}\nset(CMAKE_TOOLCHAIN_FILE [=[${_ament_vendor_wrapper}]=] CACHE INTERNAL \"\")")
+        else()
+          set(CMAKE_ARGS_CONTENT "${CMAKE_ARGS_CONTENT}\nset(CMAKE_TOOLCHAIN_FILE [=[${CMAKE_TOOLCHAIN_FILE}]=] CACHE INTERNAL \"\")")
+        endif()
 
 # Dependencies that every package of a given build_type needs at build time but that
 # almost no package.xml declares, because apt/colcon have them installed system-wide.
