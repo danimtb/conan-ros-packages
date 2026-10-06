@@ -390,6 +390,73 @@ patches:
         if(MSVC)
           set(OGRE_CXX_FLAGS "/D_HAS_AUTO_PTR_ETC=1 ${OGRE_CXX_FLAGS}")
         endif()
+    # OGRE 1.12 treats an untouched prefix as "install an SDK" and rewrites
+    # CMAKE_INSTALL_PREFIX to <build>/sdk. ament_vendor only packages
+    # ogre_vendor-prefix/install, so OGREConfig.cmake never arrives in
+    # opt/rviz_ogre_vendor/CMake and rviz_rendering's find_package(OGRE) fails.
+    # The flag stops the rewrite. The install() below still copies sdk/ when a
+    # configure already took that path.
+    - file: CMakeLists.txt
+      search: -DCMAKE_POLICY_VERSION_MINIMUM=3.20
+      replace: |-
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.20
+            -DCMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT:BOOL=OFF
+    - file: CMakeLists.txt
+      search: |-
+        ament_package(
+          CONFIG_EXTRAS_POST "rviz_ogre_vendor-extras.cmake.in"
+        )
+      replace: |-
+        if(WIN32)
+          install(CODE "
+            set(_ogre_sdk \"${CMAKE_CURRENT_BINARY_DIR}/ogre_vendor-prefix/src/ogre_vendor-build/sdk\")
+            set(_ogre_dest \"\${CMAKE_INSTALL_PREFIX}/opt/rviz_ogre_vendor\")
+            if(EXISTS \"\${_ogre_sdk}/CMake/OGREConfig.cmake\" AND NOT EXISTS \"\${_ogre_dest}/CMake/OGREConfig.cmake\")
+              message(STATUS \"Installing OGRE from \${_ogre_sdk}\")
+              file(COPY \"\${_ogre_sdk}/\" DESTINATION \"\${_ogre_dest}\")
+            endif()
+          ")
+        endif()
+
+        ament_package(
+          CONFIG_EXTRAS_POST "rviz_ogre_vendor-extras.cmake.in"
+        )
+    # The Windows branch only looks in opt/.../CMake. The same install can land
+    # in lib/OGRE/cmake, or at the package root when the nested prefix is the
+    # Conan package folder. Search those before giving up.
+    - file: rviz_ogre_vendor-extras.cmake.in
+      search: |-
+        if(WIN32)
+          set(OGRE_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/CMake")
+          set(OGRE_CMAKE_MODULE_DIR "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor/CMake")
+      replace: |-
+        if(WIN32)
+          set(_ogre_prefix "${@PROJECT_NAME@_DIR}/../../../opt/rviz_ogre_vendor")
+          get_filename_component(_ogre_prefix "${_ogre_prefix}" ABSOLUTE)
+          get_filename_component(_ogre_pkg "${@PROJECT_NAME@_DIR}/../../.." ABSOLUTE)
+          set(_ogre_candidates
+            "${_ogre_prefix}/CMake"
+            "${_ogre_prefix}/lib/OGRE/cmake"
+            "${_ogre_prefix}/lib/cmake/OGRE"
+            "${_ogre_pkg}/CMake"
+          )
+          set(OGRE_DIR "")
+          foreach(_ogre_candidate IN LISTS _ogre_candidates)
+            if(EXISTS "${_ogre_candidate}/OGREConfig.cmake")
+              set(OGRE_DIR "${_ogre_candidate}")
+              break()
+            endif()
+          endforeach()
+          if(NOT OGRE_DIR)
+            file(GLOB_RECURSE _ogre_configs "${_ogre_pkg}/OGREConfig.cmake")
+            if(_ogre_configs)
+              list(GET _ogre_configs 0 _ogre_config)
+              get_filename_component(OGRE_DIR "${_ogre_config}" DIRECTORY)
+            else()
+              set(OGRE_DIR "${_ogre_prefix}/CMake")
+            endif()
+          endif()
+          set(OGRE_CMAKE_MODULE_DIR "${OGRE_DIR}")
   # The graph provides Eigen3 through CMakeDeps, whose config sets Eigen3_FOUND. Upstream
   # tests the uppercase EIGEN3_FOUND, which only the FindEigen3.cmake that eigen3_cmake
   # module ships would set, and its module path does not survive the scope it is inserted
