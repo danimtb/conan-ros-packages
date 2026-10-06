@@ -54,6 +54,12 @@ class RosPackageConan(ConanFile):
             'find_program(vcs_EXECUTABLE vcs REQUIRED)',
             'find_program(vcs_EXECUTABLE NAMES vcs vcs.cmd REQUIRED)',
         )
+        replace_in_file(
+            self,
+            os.path.join(self.source_folder, 'cmake/ament_vendor.cmake'),
+            'set(CMAKE_ARGS_CONTENT "${CMAKE_ARGS_CONTENT}\\nset(CMAKE_TOOLCHAIN_FILE [=[${CMAKE_TOOLCHAIN_FILE}]=] CACHE INTERNAL \\"\\")")',
+            'if(WIN32)\n  get_filename_component(_ament_real_toolchain "${CMAKE_TOOLCHAIN_FILE}" ABSOLUTE)\n  set(_ament_vendor_staging "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}-prefix/install")\n  set(_ament_vendor_prefix "${CMAKE_INSTALL_PREFIX}/opt/${PROJECT_NAME}")\n  file(TO_CMAKE_PATH "${_ament_real_toolchain}" _ament_real_toolchain)\n  file(TO_CMAKE_PATH "${_ament_vendor_staging}" _ament_vendor_staging)\n  file(TO_CMAKE_PATH "${_ament_vendor_prefix}" _ament_vendor_prefix)\n  set(_ament_vendor_wrapper "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}-install-prefix.cmake")\n  file(WRITE "${_ament_vendor_wrapper}"\n"include(\\"${_ament_real_toolchain}\\")\nunset(CMAKE_INSTALL_PREFIX)\nset(CMAKE_INSTALL_PREFIX \\"${_ament_vendor_prefix}\\")\nunset(CMAKE_STAGING_PREFIX)\nset(CMAKE_STAGING_PREFIX \\"${_ament_vendor_staging}\\")\nset(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OFF)\n")\n  set(CMAKE_ARGS_CONTENT "${CMAKE_ARGS_CONTENT}\\nset(CMAKE_TOOLCHAIN_FILE [=[${_ament_vendor_wrapper}]=] CACHE INTERNAL \\"\\")")\nelse()\n  set(CMAKE_ARGS_CONTENT "${CMAKE_ARGS_CONTENT}\\nset(CMAKE_TOOLCHAIN_FILE [=[${CMAKE_TOOLCHAIN_FILE}]=] CACHE INTERNAL \\"\\")")\nendif()',
+        )
 
     def generate(self):
         CMakeDeps(self).generate()
